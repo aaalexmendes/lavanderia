@@ -656,6 +656,48 @@
     .brand{flex-direction:column;align-items:flex-start;gap:12px}
     .brand-divider{display:none}
   }
+  /* ---- Fechamento do mês / Lucro × Investimentos ---- */
+  .fx-up-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .fx-up{padding:22px 16px !important;cursor:pointer}
+  .fx-up h4 small{font-weight:500;color:var(--muted);font-size:11px}
+  .fx-up-status{margin-top:10px;font-size:11.5px;font-weight:700;color:var(--muted);background:var(--paper-2);border-radius:8px;padding:5px 10px;display:inline-block}
+  .fx-up-status.ok{background:var(--good-soft);color:var(--good)}
+  .fx-up-status a{color:var(--lav-blue)}
+  .fx-mini{margin-top:8px;padding:5px 10px !important;font-size:11.5px !important}
+  .fx-head{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-start}
+  .fx-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .fx-actions select,.fx-setting select{border:1px solid var(--line);border-radius:8px;padding:7px 9px;font-family:inherit;font-size:12.5px;background:#fff;color:var(--ink)}
+  .fx-setting{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin:4px 0 12px;font-size:12.5px;color:var(--ink)}
+  .fx-hint,.fx-note{font-size:11.5px;color:var(--muted);line-height:1.5}
+  .fx-note{margin-top:10px}
+  .fx-tbl-wrap{overflow-x:auto;max-height:640px;overflow-y:auto;border:1px solid var(--line-2);border-radius:10px}
+  .fx-tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+  .fx-tbl th{position:sticky;top:0;background:var(--card-tint);font-size:10px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);font-weight:700;text-align:left;padding:9px 8px;border-bottom:1px solid var(--line);z-index:1}
+  .fx-tbl td{padding:8px;border-bottom:1px solid var(--line-2);vertical-align:middle;color:var(--ink)}
+  .fx-tbl .r{text-align:right;font-variant-numeric:tabular-nums}
+  .fx-tbl .nw{white-space:nowrap}
+  .fx-tbl .pos{color:var(--good);font-weight:600}
+  .fx-tbl .neg{color:var(--lav-red);font-weight:600}
+  .fx-tbl tr.fx-rev td{background:var(--warn-soft)}
+  .fx-tbl tr.tot td{font-weight:700;border-top:1px solid var(--line)}
+  .fx-tbl tr.hl td{background:var(--good-soft);font-family:'Poppins',sans-serif;font-size:13.5px}
+  .fx-sum th{position:static}
+  .fx-desc{font-weight:600}
+  .fx-sub{font-size:11px;color:var(--muted);font-weight:500}
+  .fx-cat{width:100%;min-width:220px;border:1px solid var(--line);border-radius:7px;padding:6px 7px;font-family:inherit;font-size:12px;background:#fff;color:var(--ink)}
+  .fx-rev .fx-cat{border-color:var(--warn)}
+  .fx-badge{font-size:9.5px;font-weight:800;padding:3px 8px;border-radius:8px;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap}
+  .fx-badge.ok{background:var(--good-soft);color:var(--good)}
+  .fx-badge.mem{background:rgba(46,48,148,.1);color:var(--lav-blue)}
+  .fx-badge.rev{background:var(--warn);color:#3a2a00}
+  .iv-form{display:flex;flex-direction:column;gap:2px}
+  .iv-row{display:grid;grid-template-columns:1fr 130px;gap:2px 10px;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line)}
+  .iv-row span{font-size:12.5px;color:var(--ink)}
+  .iv-row b{text-align:right;font-family:'Poppins',sans-serif}
+  .iv-row input{border:1px solid var(--line);border-radius:7px;padding:6px 8px;font-family:inherit;font-size:13px;text-align:right;width:100%}
+  .iv-row small{grid-column:1/-1;font-size:10.5px;color:var(--muted)}
+  .iv-chk{background:var(--warn);color:#3a2a00;font-weight:800;font-size:9px;letter-spacing:.4px;text-transform:uppercase;border-radius:6px;padding:1px 6px}
+  @media(max-width:900px){.fx-up-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -674,13 +716,13 @@
       </div>
       <div class="meta">
         <span class="pill">ABERTA EM 2024</span><br>
-        Período: <b>Jan/2024 → Mai/2026</b><br>
-        27 meses operados<br>
-        Atualizado em <b>15/05/2026</b>
+        Período: <b id="hdrPeriodo">Jan/2024 → Mai/2026</b><br>
+        <span id="hdrMeses">27 meses operados</span><br>
+        Atualizado em <b>07/11/2026</b>
       </div>
     </div>
 
-    <div class="intro">
+    <div class="intro" id="ovIntro">
       <b>Leitura rápida:</b> a unidade está <b>operacionalmente lucrativa</b> (margem ~20%), mas <b>ainda não recuperou o investimento inicial</b>. Em 27 meses, o resultado acumulado quase empata com o que o capital renderia na Selic — o caminho para vencer o custo de oportunidade é acelerar volume e abrir distância do break-even.
     </div>
   </header>
@@ -688,13 +730,12 @@
   <!-- ============== NAV ============== -->
   <nav class="topnav fade d2">
     <div class="tlink active" data-view="overview"><span class="dot"></span>Visão geral</div>
-    <div class="tlink" data-view="acquisition"><span class="dot"></span>Custo de aquisição</div>
+    <div class="tlink" data-view="closing"><span class="dot"></span>Fechamento do mês</div>
+    <div class="tlink" data-view="opportunity"><span class="dot"></span>Lucro × Investimentos</div>
     <div class="tlink" data-view="performance"><span class="dot"></span>Desempenho</div>
-    <div class="tlink" data-view="opportunity"><span class="dot"></span>Custo de oportunidade</div>
     <div class="tlink" data-view="sales"><span class="dot"></span>Vendas (sistema)</div>
     <div class="tlink" data-view="expenses"><span class="dot"></span>Despesas mensais</div>
-    <div class="tlink" data-view="accounting"><span class="dot"></span>Conferência contábil</div>
-    <div class="tlink" data-view="statement"><span class="dot"></span>Classificar extrato</div>
+    <div class="tlink" data-view="acquisition"><span class="dot"></span>Custo de aquisição</div>
   </nav>
 
   <!-- ====================================================================== -->
@@ -767,7 +808,7 @@
         </div>
         <div style="font-size:11px;color:var(--muted);margin-top:8px;display:flex;justify-content:space-between">
           <span>R$ 0</span>
-          <span>Break-even: R$ 11.463</span>
+          <span id="ovBeLbl">Break-even: R$ 11.463</span>
           <span id="ovBeScale">R$ 20k</span>
         </div>
       </div>
@@ -789,20 +830,20 @@
       </div>
       <div class="kpi cyan">
         <div class="label">Faturamento Acumulado</div>
-        <div class="val">R$ 269,5<span class="un"> mil</span></div>
-        <div class="note">Receita bruta real em 27 meses. Média R$ 9,98 mil/mês, em tendência de alta.</div>
+        <div class="val" id="ovFatAcc">R$ 269,5<span class="un"> mil</span></div>
+        <div class="note" id="ovFatAccNote">Receita bruta real em 27 meses.</div>
         <span class="tag up">+19,0% de 2024→2025</span>
       </div>
       <div class="kpi good">
         <div class="label">Resultado Operacional Acum.</div>
-        <div class="val">R$ 58,2<span class="un"> mil</span></div>
-        <div class="note">Lucro operacional somado (receita − despesas), sem contar parcelas de implantação.</div>
+        <div class="val" id="ovResAcc">R$ 58,2<span class="un"> mil</span></div>
+        <div class="note" id="ovResAccNote">Lucro operacional somado.</div>
         <span class="tag up">caixa positivo</span>
       </div>
       <div class="kpi red">
         <div class="label">Investimento a Recuperar</div>
-        <div class="val">R$ 126,3<span class="un"> mil</span></div>
-        <div class="note">Falta 68% do capital. Payback total estimado em ~73 meses (~6 anos).</div>
+        <div class="val" id="ovPbVal">R$ 126,3<span class="un"> mil</span></div>
+        <div class="note" id="ovPbNote">—</div>
         <span class="tag down">payback em andamento</span>
       </div>
     </div>
@@ -810,14 +851,14 @@
     <div class="kpi-grid fade d4" style="margin-top:14px">
       <div class="kpi">
         <div class="label">Break-even Mensal</div>
-        <div class="val sm">R$ 11.463</div>
-        <div class="note">~302 ciclos/mês ou ~10 ciclos/dia. Faturamento médio recente: R$ 11.735.</div>
+        <div class="val sm" id="ovBeVal">R$ 11.463</div>
+        <div class="note" id="ovBeNote">—</div>
         <span class="tag neu">meta operacional</span>
       </div>
       <div class="kpi cyan">
         <div class="label">Margem de Contribuição</div>
-        <div class="val sm">68,3%</div>
-        <div class="note">Cada ciclo de R$ 37,90 deixa R$ 25,88 após custo variável.</div>
+        <div class="val sm" id="ovMcVal">68,3%</div>
+        <div class="note" id="ovMcNote">—</div>
         <span class="tag up">margem saudável</span>
       </div>
       <div class="kpi">
@@ -828,8 +869,8 @@
       </div>
       <div class="kpi red">
         <div class="label">Custo de Oportunidade</div>
-        <div class="val sm">R$ 59,98 mil</div>
-        <div class="note">Quanto os R$ 184,5 mil renderiam no Tesouro Selic (jan/24–mai/26).</div>
+        <div class="val sm" id="ovOppVal">R$ 59,98 mil</div>
+        <div class="note" id="ovOppNote">—</div>
         <span class="tag down">benchmark a superar</span>
       </div>
     </div>
@@ -913,9 +954,9 @@
       </div>
       <div class="kpi good">
         <div class="label">2026 · Em andamento</div>
-        <div class="val sm">R$ 35,21 <span class="un">mil</span></div>
-        <div class="note">jan-mar (3 meses reais) · média R$ 11.735/mês · resultado <b>R$ 10,99 mil</b></div>
-        <span class="tag up">melhor margem da história: 31%</span>
+        <div class="val sm" id="pf26Val">R$ 35,21 <span class="un">mil</span></div>
+        <div class="note" id="pf26Note">—</div>
+        <span class="tag up" id="pf26Tag">—</span>
       </div>
     </div>
 
@@ -972,19 +1013,18 @@
         <h3>Break-even — Onde a unidade está</h3>
         <div class="ph-sub">Faturamento médio recente contra o ponto de equilíbrio</div>
         <div class="be-wrap">
-          <div class="be-stat"><span class="k">Faturamento de equilíbrio</span><span class="v">R$ 11.463<small>/mês</small></span></div>
-          <div class="be-stat"><span class="k">Faturamento médio 2026 (jan–mar)</span><span class="v">R$ 11.735<small>/mês</small></span></div>
-          <div class="be-stat"><span class="k">Ciclos necessários para o equilíbrio</span><span class="v">~302<small>/mês · ~10/dia</small></span></div>
-          <div class="be-stat"><span class="k">Margem de segurança atual</span><span class="v" style="color:var(--good)">+2,4%</span></div>
+          <div class="be-stat"><span class="k">Faturamento de equilíbrio</span><span class="v" id="pfBeVal">R$ 11.463<small>/mês</small></span></div>
+          <div class="be-stat"><span class="k" id="pfFatRecK">Faturamento médio</span><span class="v" id="pfFatRec">—</span></div>
+          <div class="be-stat"><span class="k">Margem de segurança atual</span><span class="v" style="color:var(--good)" id="pfMargem">—</span></div>
           <div style="margin-top:6px">
             <div style="font-size:11.5px;color:var(--muted);margin-bottom:4px">Posição do faturamento médio recente</div>
             <div class="gauge">
-              <div class="fill" style="width:0%" id="beFill">102%</div>
+              <div class="fill" style="width:0%" id="beFill"></div>
               <div class="marker" style="left:0%" id="beMarker"></div>
             </div>
           </div>
           <div class="verdict">
-            A unidade opera <b>logo acima do break-even</b> — qualquer queda de volume a coloca no vermelho. Meta: passar de ~10 para <b>14–16 ciclos/dia</b> para criar folga real de caixa.
+            Detalhes do cálculo e do payback na aba <b>Lucro × Investimentos</b>.
           </div>
         </div>
       </div>
@@ -994,44 +1034,206 @@
   <!-- ====================================================================== -->
   <!-- ============ VIEW: OPPORTUNITY ============ -->
   <!-- ====================================================================== -->
-  <section data-view-section="opportunity" class="hidden">
+  <!-- ====================================================================== -->
+  <!-- ============ VIEW: FECHAMENTO DO MÊS (novo) ============ -->
+  <!-- ====================================================================== -->
+  <section data-view-section="closing" class="hidden">
     <div class="sec-title fade d2">
-      <span class="n">4</span>
-      <h2>Custo de Oportunidade — Negócio vs. Tesouro Selic</h2>
+      <span class="n">★</span>
+      <h2>Fechamento do mês — extrato, nota fiscal e contabilidade</h2>
       <span class="ln"></span>
     </div>
 
-    <div class="grid-2-a fade d3">
-      <div class="panel">
-        <h3>O que os R$ 184,5 mil fizeram?</h3>
-        <div class="ph-sub">Resultado do negócio contra a aplicação do mesmo capital na Selic (jan/24–mai/26)</div>
-        <div class="versus">
-          <div class="vs-card biz">
-            <div class="vs-label">No Negócio</div>
-            <div class="vs-val">R$ 58,2 mil</div>
-            <div class="vs-sub">Resultado operacional · ROI 31,6%</div>
-          </div>
-          <div class="vs-mid">vs</div>
-          <div class="vs-card selic">
-            <div class="vs-label">Na Selic</div>
-            <div class="vs-val">R$ 59,98 mil</div>
-            <div class="vs-sub">Rendimento Tesouro · ROI 32,5%</div>
-          </div>
+    <div class="panel fade d3">
+      <h3>1 · Envie os arquivos do mês</h3>
+      <div class="ph-sub">Pode arrastar os arquivos juntos em qualquer caixa — o dashboard reconhece cada um pelo formato.</div>
+      <div class="fx-up-grid">
+        <label class="upload-box fx-up" id="fxUpOfx" for="fxInOfx">
+          <div class="uicon">1</div>
+          <h4>Extrato do banco (.OFX)</h4>
+          <p>O mesmo arquivo que você envia para a contabilidade.</p>
+          <div class="fx-up-status" id="fxStOfx">aguardando</div>
+          <input type="file" id="fxInOfx" accept=".ofx,.OFX" multiple>
+        </label>
+        <label class="upload-box fx-up" id="fxUpSales" for="fxInSales">
+          <div class="uicon">2</div>
+          <h4>Vendas do sistema (.xlsx)</h4>
+          <p>Relatório "Vendas" do sistema — usado para a nota fiscal (sem vouchers).</p>
+          <div class="fx-up-status" id="fxStSales">aguardando</div>
+          <input type="file" id="fxInSales" accept=".xlsx,.xls,.csv" multiple>
+        </label>
+        <label class="upload-box fx-up" id="fxUpContab" for="fxInContab">
+          <div class="uicon">3</div>
+          <h4>Exportação da contabilidade <small>(opcional)</small></h4>
+          <p>Arquivo "exportacao.xls" da Contabilivre — confere a classificação e atualiza os resultados de 2026.</p>
+          <div class="fx-up-status" id="fxStContab">aguardando</div>
+          <input type="file" id="fxInContab" accept=".xls,.xlsx,.html,.htm" multiple>
+        </label>
+      </div>
+    </div>
+
+    <!-- KPIs do mês -->
+    <div class="kpi-grid fade d3 hidden" id="fxKpis" style="margin-top:16px">
+      <div class="kpi good">
+        <div class="label">Valor da nota fiscal</div>
+        <div class="val sm" id="fxNfVal">—</div>
+        <div class="note" id="fxNfNote">Envie o relatório de vendas.</div>
+        <button class="cat-btn ghost fx-mini" id="fxCopyNf" type="button">Copiar valor</button>
+      </div>
+      <div class="kpi cyan">
+        <div class="label">Entradas no banco</div>
+        <div class="val sm" id="fxInVal">—</div>
+        <div class="note" id="fxInNote">—</div>
+      </div>
+      <div class="kpi red">
+        <div class="label">Saídas no banco</div>
+        <div class="val sm" id="fxOutVal">—</div>
+        <div class="note" id="fxOutNote">—</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Para revisar</div>
+        <div class="val sm" id="fxRevVal">—</div>
+        <div class="note" id="fxRevNote">—</div>
+      </div>
+    </div>
+
+    <!-- Lançamentos classificados -->
+    <div class="panel fade d4 hidden" id="fxStmtPanel" style="margin-top:16px">
+      <div class="fx-head">
+        <div>
+          <h3>2 · Lançamentos classificados nas categorias da Contabilivre</h3>
+          <div class="ph-sub" id="fxStmtSub">—</div>
         </div>
-        <div class="verdict">
-          Em 27 meses, o negócio gerou <b>R$ 1,8 mil a menos</b> que a renda fixa — praticamente empate. Mas há uma diferença essencial: a Selic é um teto fixo, enquanto a <b>lavanderia ainda está em curva de crescimento</b> e construiu um ativo (ponto, base de clientes, maquinário). O custo de oportunidade será "vencido" quando o lucro anual superar com folga ~R$ 25 mil/ano.
+        <div class="fx-actions">
+          <select id="fxFilter">
+            <option value="all">Todos</option>
+            <option value="review">Só os que precisam de revisão</option>
+            <option value="credit">Só entradas</option>
+            <option value="debit">Só saídas</option>
+          </select>
+          <button class="cat-btn ghost" id="fxExportCsv" type="button">⬇ CSV p/ contabilidade</button>
+          <button class="cat-btn ghost" id="fxCopySummary" type="button">Copiar resumo</button>
         </div>
       </div>
+      <div class="fx-setting">
+        <label>Pix vindo do Mercado Pago (da própria empresa) entra como
+          <select id="fxMpSetting">
+            <option value="RECEBIMENTOS DE CLIENTES">RECEBIMENTOS DE CLIENTES (receita)</option>
+            <option value="TRANSFERÊNCIA ENTRE CONTAS">TRANSFERÊNCIA ENTRE CONTAS</option>
+          </select>
+        </label>
+        <span class="fx-hint">Ao trocar a categoria de um lançamento, o dashboard memoriza a escolha para o mesmo favorecido nos próximos meses.</span>
+      </div>
+      <div class="fx-tbl-wrap">
+        <table class="fx-tbl" id="fxStmtTable"></table>
+      </div>
+    </div>
+
+    <div class="grid-2 fade d4 hidden" id="fxBottom" style="margin-top:16px">
       <div class="panel">
-        <h3>Selic acumulada do período</h3>
-        <div class="ph-sub">Taxas anuais usadas no cálculo</div>
-        <div class="chart-box short"><canvas id="chSelic"></canvas></div>
-        <p style="font-size:11.5px;color:var(--muted);margin-top:12px;line-height:1.6">
-          Fator acumulado jan/24→mai/26: <b style="color:var(--ink)">1,325</b> (≈ +32,5%). 2024: 10,88% · 2025: 14,32% · 2026 até abril: 4,54%.
-        </p>
+        <h3>3 · Resumo por categoria</h3>
+        <div class="ph-sub">Total de cada categoria no mês — é o que deve aparecer na Contabilivre.</div>
+        <table class="fx-tbl fx-sum" id="fxSumTable"></table>
+      </div>
+      <div class="panel">
+        <h3>4 · Nota fiscal e conferência das vendas</h3>
+        <div class="ph-sub" id="fxNfSub">Envie o relatório de vendas do sistema.</div>
+        <table class="fx-tbl fx-sum" id="fxNfTable"></table>
+        <h3 style="margin-top:18px">Vendas × o que caiu no banco</h3>
+        <div class="ph-sub">Diferença esperada: taxas da maquininha e vendas do fim do mês que caem no mês seguinte.</div>
+        <table class="fx-tbl fx-sum" id="fxRecTable"></table>
+      </div>
+    </div>
+
+    <div class="panel fade d4 hidden" id="fxContabPanel" style="margin-top:16px">
+      <h3>5 · Conferência com a contabilidade</h3>
+      <div class="ph-sub" id="fxContabSub">—</div>
+      <table class="fx-tbl fx-sum" id="fxContabTable"></table>
+      <div class="fx-note" id="fxContabNote"></div>
+    </div>
+  </section>
+
+  <!-- ====================================================================== -->
+  <!-- ============ VIEW: LUCRO × INVESTIMENTOS (substitui custo de oportunidade) ============ -->
+  <!-- ====================================================================== -->
+  <section data-view-section="opportunity" class="hidden">
+    <div class="sec-title fade d2">
+      <span class="n">4</span>
+      <h2>Lucro do negócio × Investimentos e Break-even</h2>
+      <span class="ln"></span>
+    </div>
+
+    <div class="kpi-grid fade d3" id="ivKpis">
+      <div class="kpi good">
+        <div class="label">Lucro acumulado do negócio</div>
+        <div class="val sm" id="ivBizVal">—</div>
+        <div class="note" id="ivBizNote">—</div>
+      </div>
+      <div class="kpi red">
+        <div class="label">Investimento a recuperar</div>
+        <div class="val sm" id="ivPbVal">—</div>
+        <div class="note" id="ivPbNote">—</div>
+      </div>
+      <div class="kpi cyan">
+        <div class="label">Break-even mensal</div>
+        <div class="val sm" id="ivBeVal">—</div>
+        <div class="note" id="ivBeNote">—</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Melhor alternativa no período</div>
+        <div class="val sm" id="ivBestVal">—</div>
+        <div class="note" id="ivBestNote">—</div>
+      </div>
+    </div>
+
+    <div class="grid-2-a fade d3" style="margin-top:16px">
+      <div class="panel">
+        <h3>Se os R$ 184,5 mil tivessem sido aplicados</h3>
+        <div class="ph-sub" id="ivCmpSub">—</div>
+        <div class="chart-box"><canvas id="chInvCompare"></canvas></div>
+        <table class="fx-tbl fx-sum" id="ivCmpTable" style="margin-top:12px"></table>
+      </div>
+      <div class="panel">
+        <h3>Índices usados</h3>
+        <div class="ph-sub">Selic vem embutida (Banco Central). CDI e dólar são buscados no Banco Central ao abrir; o Ibovespa é digitado.</div>
+        <div class="iv-form" id="ivForm">
+          <div class="iv-row"><span>Selic acumulada no período</span><b id="ivSelicAcc">—</b><small id="ivSelicSrc">BCB · série 4390</small></div>
+          <div class="iv-row"><span>CDI acumulado no período (%)</span><input type="text" id="ivCdi" inputmode="decimal"><small id="ivCdiSrc">—</small></div>
+          <div class="iv-row"><span>Dólar PTAX na data-base (R$)</span><input type="text" id="ivUsd0" inputmode="decimal"><small id="ivUsd0Src">—</small></div>
+          <div class="iv-row"><span>Dólar PTAX no fim do período (R$)</span><input type="text" id="ivUsd1" inputmode="decimal"><small id="ivUsd1Src">—</small></div>
+          <div class="iv-row"><span>Ibovespa na data-base (pontos)</span><input type="text" id="ivIbov0" inputmode="decimal"><small id="ivIbov0Src">—</small></div>
+          <div class="iv-row"><span>Ibovespa no fim do período (pontos)</span><input type="text" id="ivIbov1" inputmode="decimal"><small id="ivIbov1Src">—</small></div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+          <button class="cat-btn ghost" id="ivFetch" type="button">↻ Buscar CDI e dólar no Banco Central</button>
+        </div>
+        <div class="fx-note" id="ivFetchStatus"></div>
+        <div class="fx-note">Valores marcados como <span class="iv-chk">conferir</span> não vieram de fonte oficial verificada — confira e corrija se necessário. Suas edições ficam salvas neste navegador.</div>
+      </div>
+    </div>
+
+    <div class="grid-2 fade d4" style="margin-top:16px">
+      <div class="panel">
+        <h3>Lucro acumulado × rendimento da renda fixa</h3>
+        <div class="ph-sub">Mês a mês: o que o negócio já gerou contra o que o capital renderia na Selic</div>
+        <div class="chart-box"><canvas id="chInvLine"></canvas></div>
+      </div>
+      <div class="panel">
+        <h3>Break-even — onde a unidade está</h3>
+        <div class="ph-sub" id="ivBeSub">—</div>
+        <table class="fx-tbl fx-sum" id="ivBeTable"></table>
+        <div style="margin-top:12px">
+          <div style="font-size:11.5px;color:var(--muted);margin-bottom:4px">Faturamento médio (últimos 6 meses reais) × ponto de equilíbrio</div>
+          <div class="gauge"><div class="fill" id="ivBeFill" style="width:0%">0%</div><div class="marker" id="ivBeMarker" style="left:0%"></div></div>
+        </div>
+        <div class="verdict" id="ivBeVerdict">—</div>
+        <h3 style="margin-top:18px">Payback do investimento</h3>
+        <div class="gauge" style="margin-top:8px"><div class="fill" id="ivPbFill" style="width:0%">0%</div></div>
+        <div class="verdict" id="ivPbVerdict">—</div>
       </div>
     </div>
   </section>
+
 
   <!-- ====================================================================== -->
   <!-- ============ VIEW: SALES (relatório de vendas) ============ -->
@@ -1431,14 +1633,53 @@ fev/2024,4964.90,5978.36,-1013.46
     <img id="logoColorido" alt="Lavateria Fast">
     <footer style="flex:1;text-align:right;min-width:280px">
       <b>Fontes:</b> Planilhas Financeiro Lavateria FAST 2024–2026.
-      <b>Selic:</b> BCB · 2024 ≈10,88% · 2025 14,32% · 2026 (até abr) 4,54%.<br>
-      Meses de abr–dez/2026 são projeção. Dados carregados por upload ficam apenas no navegador (não saem do seu computador).<br>
+      <b>Selic:</b> Banco Central, série SGS 4390 (jan/2024–out/2026, consultada em 07/11/2026).<br>
+      2024–2025: planilhas financeiras. 2026: exportação da contabilidade (Contabilivre), meses seguintes são projeção. Dados carregados por upload ficam apenas no navegador (não saem do seu computador).<br>
       Este dashboard é uma ferramenta de gestão e não constitui aconselhamento contábil ou de investimento.
     </footer>
   </div>
 
 </div>
 
+<!-- ====================================================================== -->
+<!-- ============ MODAL: Gerenciador de Categorias ============ -->
+<!-- ====================================================================== -->
+<div class="cat-modal-backdrop" id="catManagerBackdrop">
+  <div class="cat-modal">
+    <div class="cat-modal-head">
+      <h3>Gerenciar categorias</h3>
+      <button class="cat-modal-close" id="closeCatManager" title="Fechar">×</button>
+    </div>
+    <div class="cat-modal-body">
+      <p style="font-size:12.5px;color:var(--muted);line-height:1.6;margin-bottom:14px">
+        Crie categorias personalizadas para sua operação. As <b style="color:var(--ink)">palavras-chave</b> são usadas pelo botão <b style="color:var(--ink)">⚡ Sugerir categorias</b> para classificar lançamentos automaticamente (separe por vírgulas, ex: <i>aluguel, imobiliaria, locacao</i>).
+      </p>
+
+      <div class="cat-add-form">
+        <input type="text" id="newCatLabel" placeholder="Nome (ex: Despesa Fixa · Estacionamento)">
+        <select id="newCatType">
+          <option value="debit" selected>Despesa</option>
+          <option value="credit">Receita</option>
+          <option value="both">Ambos</option>
+        </select>
+        <input type="text" id="newCatKw" placeholder="palavras-chave (separe por vírgula)">
+        <button id="addCatBtn">+ Adicionar</button>
+      </div>
+
+      <div class="cat-list" id="catManagerList"></div>
+    </div>
+    <div class="cat-modal-foot">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="cat-btn ghost" id="exportCatBtn">⬇ Exportar JSON</button>
+        <label class="cat-btn ghost" style="cursor:pointer">
+          ⬆ Importar JSON
+          <input type="file" id="importCatInput" accept=".json" style="display:none">
+        </label>
+      </div>
+      <button class="cat-btn danger" id="resetCatBtn">Restaurar padrão</button>
+    </div>
+  </div>
+</div>
 <script>
 /* ====================================================================== */
 /*  LOGO DATA URIs (embutidas — sem dependência de internet)              */
@@ -1468,15 +1709,68 @@ document.querySelectorAll('.topnav .tlink').forEach(link=>{
 /* ====================================================================== */
 const M = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
 
+/* ====================================================================== */
+/*  DADOS 2026 — exportação da contabilidade (Contabilivre)                */
+/*  Embutida a partir de exportacao.xls (jan–out/2026). Quando um novo     */
+/*  arquivo é enviado na aba Fechamento do mês, ele fica salvo neste       */
+/*  navegador e passa a ser usado aqui.                                     */
+/* ====================================================================== */
+const CONTAB_DEFAULT = {"months":["01/2026","02/2026","03/2026","04/2026","05/2026","06/2026","07/2026","08/2026","09/2026","10/2026"],"rows":[["(+) ENTRADAS",[11318.04,11313.78,11620.3,11168.38,10403.78,14550.52,9356.68,10773.47,8740.81,14499.09]],["(–) IMPOSTOS",[-769.39,-852.73,0.0,-1437.9,-178.31,-178.31,-1686.75,-829.89,-751.22,-956.14]],["(–) DEVOLUÇÕES",[0.0,0.0,0.0,0.0,0.0,-768.38,0.0,0.0,0.0,0.0]],["(=) ENTRADAS LÍQUIDAS",[10548.65,10461.05,11620.3,9730.48,10225.47,13603.83,7669.93,9943.58,7989.59,13542.95]],["SAÍDAS",[0,0,0,0,0,0,0,0,0,0]],["(–) ÁGUA,LUZ,ENERGIA,INTERNET/TELEFONE",[-2554.0,-2014.94,-1015.69,-1850.41,-1808.42,-1941.59,-2061.03,-2962.06,-2840.7,-2589.91]],["(–) ALUGUÉIS",[-1624.13,-1969.27,-1701.37,-1701.37,-1701.37,-1701.37,-1701.37,-1776.63,-1766.63,-1766.63]],["(–) ASSESSORIA CONTÁBIL",[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]],["(–) COMISSÕES SOBRE VENDAS",[0.0,0.0,0.0,-1284.24,0.0,0.0,0.0,0.0,0.0,0.0]],["(–) DESPESAS COM SEGURO",[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]],["(–) DESPESAS COM SOFTWARES",[-273.95,-273.95,-273.95,-279.87,-273.95,-273.95,-273.95,-273.95,-273.95,-285.51]],["(–) DISTRIBUIÇÃO DE LUCROS (LEI 15270) REFERENTE A ATA REGISTRADA",[-4700.0,0.0,0.0,-4000.0,0.0,0.0,0.0,0.0,0.0,0.0]],["(–) DISTRIBUIÇÃO DE LUCROS DO EXERCÍCIO ANTERIOR",[0.0,-5000.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]],["(–) FRETES",[0.0,0.0,-700.0,0.0,0.0,0.0,0.0,-900.0,0.0,0.0]],["(–) IMPOSTOS E TAXAS DIVERSOS",[0.0,-179.21,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]],["(–) INSUMOS DE LIMPEZA E OUTROS",[0.0,0.0,0.0,0.0,0.0,-2500.0,-709.0,0.0,0.0,0.0]],["(–) OUTRAS CONTRIBUIÇÕES E DOAÇÕES",[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]],["(–) OUTRAS DESPESAS",[0.0,0.0,-1284.24,0.0,-1284.24,0.0,0.0,-6000.0,0.0,-1211.04]],["(–) PAGAMENTO DE EMPRÉSTIMOS",[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]],["(–) PAGAMENTO DE FORNECEDORES",[-1284.24,-1284.24,-5000.0,0.0,0.0,-1284.24,-1284.24,-1284.24,-1284.24,-1284.24]],["(–) PRO-LABORE",[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]],["(–) PROPAGANDA E MARKETING",[-250.0,-250.0,-250.0,-250.0,-250.0,-250.0,-250.0,-250.0,-250.0,-676.0]],["(–) SERVIÇOS DE TERCEIROS",[-150.0,0.0,-767.8,0.0,0.0,-300.0,-4500.0,-300.0,-932.0,-200.0]],["(–) TARIFA CAMBIAL",[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]],["(-/+)NÃO CATEGORIZADO",[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]],["(=) TOTAL DAS SAÍDAS",[-10836.32,-10971.61,-10993.05,-9365.89,-5317.98,-8251.15,-10779.59,-13746.88,-7347.52,-8013.33]],["(=) RESULTADO OPERACIONAL DE CAIXA",[-287.67,-510.56,627.25,364.59,4907.49,5352.68,-3109.66,-3803.3,642.07,5529.62]],["(+) RENDIMENTOS FINANCEIROS",[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]],["(–) DESPESAS FINANCEIROS",[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]],["(+) OUTRAS ENTRADAS",[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]],["(–) OUTRAS SAÍDAS",[0.0,0.0,0.0,0.0,0.0,-20.49,0.0,0.0,0.0,0.0]],["(=) RESULTADO NÃO OPERACIONAL DE CAIXA",[0.0,0.0,0.0,0.0,0.0,-20.49,0.0,0.0,0.0,0.0]],["(=) RESULTADO LÍQUIDO DE CAIXA",[-287.67,-510.56,627.25,364.59,4907.49,5332.19,-3109.66,-3803.3,642.07,5529.62]],["OUTRAS ORIGENS DE CAIXA",[0,0,0,0,0,0,0,0,0,0]],["(+) EMPRÉSTIMO DE SÓCIOS",[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]],["(=) TOTAL DAS ORIGENS",[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]],["DESTINAÇÕES DE CAIXA",[0,0,0,0,0,0,0,0,0,0]],["(–) ANTECIPAÇÃO DE LUCROS",[0.0,0.0,0.0,0.0,-5000.0,-2000.0,0.0,0.0,0.0,0.0]],["(=) TOTAL DAS DESTINAÇÕES",[0.0,0.0,0.0,0.0,-5000.0,-2000.0,0.0,0.0,0.0,0.0]],["(=) RESULTADO DE CAIXA APÓS ORIGENS E DESTINAÇÕES",[-287.67,-510.56,627.25,364.59,-92.51,3332.19,-3109.66,-3803.3,642.07,5529.62]],["(=) SALDO ANTERIOR",[4938.93,4651.26,4140.7,4767.95,5132.54,5040.03,8372.22,5262.56,1459.26,2101.33]],["(=) SALDO FINAL",[4651.26,4140.7,4767.95,5132.54,5040.03,8372.22,5262.56,1459.26,2101.33,7630.95]]],"fonte":"exportacao.xls (Contabilivre) importada em 07/11/2026"};
+const CONTAB_LS_KEY = 'lavateria_contab_v1';
+function ctKey(s){
+  return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')
+    .replace(/[^a-z0-9]+/g,' ').trim();
+}
+function loadContab(){
+  try{
+    const s = localStorage.getItem(CONTAB_LS_KEY);
+    if(s){ const o = JSON.parse(s); if(o && Array.isArray(o.months) && Array.isArray(o.rows) && o.months.length) return o; }
+  }catch(e){}
+  return CONTAB_DEFAULT;
+}
+const CONTAB = loadContab();
+function ctRow(c, test){
+  const r = c.rows.find(r => test(ctKey(r[0])));
+  return r ? r[1] : c.months.map(()=>0);
+}
+/* Converte a exportação em faturamento e despesas operacionais por mês.
+   Faturamento = Entradas + Rendimentos financeiros + Outras entradas
+   Despesas    = Impostos + Devoluções + Saídas operacionais + Outras saídas + Despesas financeiras
+   (distribuições e antecipações de lucros NÃO são despesa — são retirada dos sócios) */
+function contabMonthly(c){
+  const ent  = ctRow(c, k => k === 'entradas');
+  const rend = ctRow(c, k => k === 'rendimentos financeiros');
+  const oent = ctRow(c, k => k === 'outras entradas');
+  const imp  = ctRow(c, k => k === 'impostos');
+  const dev  = ctRow(c, k => k === 'devolucoes');
+  const sai  = ctRow(c, k => k === 'total das saidas');
+  const osai = ctRow(c, k => k === 'outras saidas');
+  const dfin = ctRow(c, k => k === 'despesas financeiros' || k === 'despesas financeiras');
+  const distRows = c.rows.filter(r => ctKey(r[0]).startsWith('distribuicao de lucros'));
+  return c.months.map((m,i)=>{
+    const dist = distRows.reduce((s,r)=>s+(r[1][i]||0),0);
+    const fat = (ent[i]||0)+(rend[i]||0)+(oent[i]||0);
+    const desp = -((imp[i]||0)+(dev[i]||0)+((sai[i]||0)-dist)+(osai[i]||0)+(dfin[i]||0));
+    const [mm,yy] = m.split('/');
+    return {mes:+mm, ano:+yy, fat:Math.round(fat*100)/100, desp:Math.round(desp*100)/100};
+  });
+}
+const CONTAB_MONTHLY = contabMonthly(CONTAB);
+
 const fat2024=[3839.35,4964.9,6164.92,8372.11,7316.62,8728.37,10968.26,8895.13,9626.70,11165.34,12351.61,14599];
 const desp2024=[4257.29,5978.36,6945.48,5546.99,7623.72,6894.32,7471.19,7574.84,7615.64,7665.73,7314.25,8723.76];
 const fat2025=[13093.15,7679.7,9802.44,10388.54,10958.12,11892.55,12556.31,10245.13,10925.36,10245,9507.36,10040.1];
 const desp2025=[9332.78,10294.52,9175.99,9788.61,6576.38,7989.99,8539.24,11560.15,7667.51,6901.59,9028.76,6626.25];
 const fat2026=[14211.97,9638.52,11354.59,0,0,0,0,0,0,0,0,0];
 const desp2026=[9237.03,8264.66,6715.98,9133.03,6759.78,5066.11,5066.11,5066.11,5066.11,5067.1,5067.1,5067.1];
+let REAL_2026 = 3;
+(function(){
+  const m26 = CONTAB_MONTHLY.filter(x=>x.ano===2026);
+  if(m26.length){ m26.forEach(x=>{ fat2026[x.mes-1]=x.fat; desp2026[x.mes-1]=x.desp; }); REAL_2026 = Math.max(...m26.map(x=>x.mes)); }
+})();
 
 const labelsAll=[], fatAll=[], despAll=[], resAll=[], projFlag=[];
-[['24',fat2024,desp2024,12],['25',fat2025,desp2025,12],['26',fat2026,desp2026,3]].forEach(([y,f,d,realN])=>{
+[['24',fat2024,desp2024,12],['25',fat2025,desp2025,12],['26',fat2026,desp2026,REAL_2026]].forEach(([y,f,d,realN])=>{
   for(let i=0;i<12;i++){
     labelsAll.push(M[i]+'/'+y);
     fatAll.push(f[i]); despAll.push(d[i]); resAll.push(f[i]-d[i]);
@@ -1629,18 +1923,7 @@ new Chart(document.getElementById('chPayback'),{
 /* ====================================================================== */
 /*  GRÁFICO 4 — Selic                                                     */
 /* ====================================================================== */
-new Chart(document.getElementById('chSelic'),{
-  type:'bar',
-  data:{
-    labels:['2024','2025','2026 (até abr)'],
-    datasets:[{data:[10.88,14.32,4.54],backgroundColor:[C.blue,C.blueDeep,C.cyan],borderRadius:6,barThickness:54}]
-  },
-  options:{
-    responsive:true,maintainAspectRatio:false,
-    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>'Selic acumulada: '+c.raw+'%'}}},
-    scales:{x:{grid:{display:false}},y:{grid:{color:'#E6EAF7'},ticks:{callback:v=>v+'%'},beginAtZero:true}}
-  }
-});
+/* (gráfico Selic antigo substituído pela aba Lucro × Investimentos) */
 
 /* ====================================================================== */
 /*  GRÁFICO 5 — YoY (comparativo mês a mês entre anos)                    */
@@ -1653,7 +1936,7 @@ new Chart(document.getElementById('chYoY'),{
     datasets:[
       {label:'2024', data: fat2024, backgroundColor:'#D2D8EC', borderRadius:4, borderColor:'#B6BFD9'},
       {label:'2025', data: fat2025, backgroundColor:C.cyan, borderRadius:4},
-      {label:'2026', data: fat2026.map((v,i)=> i<3 ? v : null), backgroundColor:C.blue, borderRadius:4}
+      {label:'2026', data: fat2026.map((v,i)=> i<REAL_2026 ? v : null), backgroundColor:C.blue, borderRadius:4}
     ]
   },
   options:{
@@ -1683,7 +1966,7 @@ new Chart(document.getElementById('chYoY'),{
   </tr></thead><tbody>`;
   let t24=0, t25=0, t26=0;
   for(let i=0;i<12;i++){
-    const v24 = fat2024[i], v25 = fat2025[i], v26 = i<3 ? fat2026[i] : null;
+    const v24 = fat2024[i], v25 = fat2025[i], v26 = i<REAL_2026 ? fat2026[i] : null;
     t24 += v24; t25 += v25; if(v26 != null) t26 += v26;
     const d2425 = v24>0 ? ((v25-v24)/v24*100) : null;
     const d2526 = (v26 != null && v25>0) ? ((v26-v25)/v25*100) : null;
@@ -1702,7 +1985,7 @@ new Chart(document.getElementById('chYoY'),{
     <td class="v" style="color:var(--muted)">R$ ${t24.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0})}</td>
     <td class="v">R$ ${t25.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0})}</td>
     <td class="v delta-pos">+${dTotal.toFixed(0)}%</td>
-    <td class="v">R$ ${t26.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0})}<div style="font-size:10px;color:var(--muted-2);font-weight:500">3 meses</div></td>
+    <td class="v">R$ ${t26.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0})}<div style="font-size:10px;color:var(--muted-2);font-weight:500">${REAL_2026} meses</div></td>
     <td class="v">—</td>
   </tr></tbody>`;
   tbl.innerHTML = html;
@@ -1712,9 +1995,11 @@ new Chart(document.getElementById('chYoY'),{
 setTimeout(()=>{
   const fill=document.getElementById('beFill');
   const marker=document.getElementById('beMarker');
-  const scaleMax=16000;
-  const bePos=(11463/scaleMax*100);
-  const fatPos=(11735/scaleMax*100);
+  const _be=window.__BE||11463, _fr=window.__FATREC||11735;
+  const scaleMax=Math.max(16000,_be*1.35,_fr*1.35);
+  const bePos=(_be/scaleMax*100);
+  const fatPos=(_fr/scaleMax*100);
+  fill.textContent=Math.round(_fr/_be*100)+'%';
   fill.style.transition='width 1.1s cubic-bezier(.2,.7,.2,1)';
   fill.style.width=fatPos+'%';
   marker.style.left=bePos+'%';
@@ -2423,9 +2708,9 @@ function processSalesRows(rows){
 
   const headers = rows[headerIdx].map(h => h == null ? '' : String(h));
   const find = (...aliases) => {
-    for(let i=0;i<headers.length;i++){
-      const h = normStr(headers[i]);
-      if(aliases.some(a => h === normStr(a))) return i;
+    for(const a of aliases){
+      const i = headers.findIndex(h => normStr(h) === normStr(a));
+      if(i !== -1) return i;
     }
     // fallback: contains
     for(let i=0;i<headers.length;i++){
@@ -2691,7 +2976,7 @@ function renderSalesAll(){
 }
 
 const MES_LABELS_PT = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
-const BREAKEVEN_MENSAL = 11463;
+let BREAKEVEN_MENSAL = 11463;
 
 function renderOverviewSales(){
   const empty = document.getElementById('ovSalesEmpty');
@@ -3906,44 +4191,674 @@ renderStmtSummary = function(){
 };
 
 </script>
-<!-- ====================================================================== -->
-<!-- ============ MODAL: Gerenciador de Categorias ============ -->
-<!-- ====================================================================== -->
-<div class="cat-modal-backdrop" id="catManagerBackdrop">
-  <div class="cat-modal">
-    <div class="cat-modal-head">
-      <h3>Gerenciar categorias</h3>
-      <button class="cat-modal-close" id="closeCatManager" title="Fechar">×</button>
-    </div>
-    <div class="cat-modal-body">
-      <p style="font-size:12.5px;color:var(--muted);line-height:1.6;margin-bottom:14px">
-        Crie categorias personalizadas para sua operação. As <b style="color:var(--ink)">palavras-chave</b> são usadas pelo botão <b style="color:var(--ink)">⚡ Sugerir categorias</b> para classificar lançamentos automaticamente (separe por vírgulas, ex: <i>aluguel, imobiliaria, locacao</i>).
-      </p>
+<script>
 
-      <div class="cat-add-form">
-        <input type="text" id="newCatLabel" placeholder="Nome (ex: Despesa Fixa · Estacionamento)">
-        <select id="newCatType">
-          <option value="debit" selected>Despesa</option>
-          <option value="credit">Receita</option>
-          <option value="both">Ambos</option>
-        </select>
-        <input type="text" id="newCatKw" placeholder="palavras-chave (separe por vírgula)">
-        <button id="addCatBtn">+ Adicionar</button>
-      </div>
+/* ====================================================================== */
+/*  FECHAMENTO DO MÊS — OFX + Vendas + exportação contábil                 */
+/* ====================================================================== */
+const CL_CATS = {
+  'RECEITA': ['RECEBIMENTOS DE CLIENTES','OUTROS RECEBIMENTOS','OUTRAS ENTRADAS','RENDIMENTOS FINANCEIROS','DIVIDENDOS RECEBIDOS'],
+  'DESPESA': ['ANTECIPAÇÃO DE LUCROS','DISTRIBUIÇÃO DE LUCROS (LEI 15270) REFERENTE A ATA REGISTRADA','DISTRIBUIÇÃO DE LUCROS DO EXERCÍCIO ANTERIOR',
+    'ADIANTAMENTOS DIVERSOS','ÁGUA,LUZ,ENERGIA,INTERNET/TELEFONE','ALIMENTAÇÃO','ALUGUÉIS','ASSESSORIA CONTÁBIL','BENEFÍCIOS A COLABORADORES',
+    'BOLSA ESTÁGIO','COMISSÕES SOBRE VENDAS','DESPESAS CARTORIAIS, POSTAIS E OUTRAS TAXAS','DESPESAS COM SEGURO','DESPESAS COM SOFTWARES',
+    'DESPESAS FINANCEIRAS','FRETES','IMPOSTOS E TAXAS DIVERSOS','INSUMOS DE LIMPEZA E OUTROS','LIMPEZA E VIGILÂNCIA (MÃO-DE-OBRA)',
+    'MATERIAL DE ESCRITÓRIO','MULTA/JUROS','OUTRAS CONTRIBUIÇÕES E DOAÇÕES','OUTRAS DESPESAS','PAGAMENTO DE EMPRÉSTIMOS',
+    'PAGAMENTO DE FORNECEDORES','PARCELAMENTO DE IMPOSTOS','PLANO DE SAÚDE','PRO-LABORE','PROPAGANDA E MARKETING','SALÁRIOS',
+    'SERVIÇOS DE TERCEIROS','TARIFA CAMBIAL','TARIFAS BANCÁRIAS','VIAGENS'],
+  'IMPOSTO': ['DARF - IRRF S/ FOLHA','DAS - SIMPLES NACIONAL','FGTS','GARE - ICMS','GPS - INSS','IRPJ E CSLL','ISS','PIS E COFINS'],
+  'FINANCEIRO': ['ADIANTAMENTO DE CLIENTES','APORTE DE CAPITAL','DEPÓSITO','DEPÓSITOS EM CAUÇÃO','DEVOLUÇÃO DE CLIENTES',
+    'RECEBIMENTOS EM NOME DE TERCEIROS','REEMBOLSOS DIVERSOS','REPASSES A TERCEIROS','SAQUE','TRANSFERÊNCIA ENTRE CONTAS'],
+  'EMPRÉSTIMO': ['ADIANTAMENTO FUTURO AUMENTO DE CAPITAL','CONTRATAÇÃO DE EMPRÉSTIMOS','EMPRÉSTIMO DE SÓCIOS','EMPRÉSTIMO DE TERCEIROS'],
+  'INVESTIMENTO': ['APLICAÇÃO FINANCEIRA','COMPRA DE IMÓVEL','COMPRA DE MÁQUINAS E FERRAMENTAS','COMPRA DE MOEDA ESTRANGEIRA','COMPRA DE MÓVEIS',
+    'COMPRA DE VEÍCULOS','CONSTRUÇÕES E BENFEITORIAS','EMPRÉSTIMOS A SÓCIOS','IMPOSTOS RETIDOS NA FONTE S/ APLIC.FINANCEIRA','RESGATE DE APLICAÇÃO',
+    'VENDA DE IMÓVEL','VENDA DE MÁQUINAS E FERRAMENTAS','VENDA DE MOEDA ESTRANGEIRA','VENDA DE MÓVEIS','VENDA DE VEÍCULOS']
+};
+const CL_GROUP_OF = {};
+Object.entries(CL_CATS).forEach(([g,list])=>list.forEach(c=>CL_GROUP_OF[c]=g));
 
-      <div class="cat-list" id="catManagerList"></div>
-    </div>
-    <div class="cat-modal-foot">
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="cat-btn ghost" id="exportCatBtn">⬇ Exportar JSON</button>
-        <label class="cat-btn ghost" style="cursor:pointer">
-          ⬆ Importar JSON
-          <input type="file" id="importCatInput" accept=".json" style="display:none">
-        </label>
-      </div>
-      <button class="cat-btn danger" id="resetCatBtn">Restaurar padrão</button>
-    </div>
-  </div>
-</div>
+const FX_RULES_KEY = 'lavateria_regras_v1';
+const FX_CFG_KEY   = 'lavateria_fx_cfg_v1';
+function lsGet(k, def){ try{ const s=localStorage.getItem(k); return s?JSON.parse(s):def; }catch(e){ return def; } }
+function lsSet(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+let fxRules = lsGet(FX_RULES_KEY, {});
+let fxCfg = Object.assign({mpIn:'RECEBIMENTOS DE CLIENTES'}, lsGet(FX_CFG_KEY, {}));
+const fx = {ofx:null, sales:null, contab:null};
+
+const esc = s => String(s==null?'':s).replace(/[&<>"]/g, ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+const brl = v => (v<0?'−':'')+'R$ '+Math.abs(v).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const pctf = (v,d=1) => (v*100).toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d})+'%';
+const MES_NOME = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+
+/* ---------- leitura de arquivos ---------- */
+function decodeBuf(buf){
+  try{ return new TextDecoder('utf-8',{fatal:true}).decode(buf); }
+  catch(e){ return new TextDecoder('windows-1252').decode(buf); }
+}
+function fxParseOFX(text){
+  const tag = (b,t)=>{ const m=b.match(new RegExp('<'+t+'>([^<\\r\\n]*)','i')); return m?m[1].trim():''; };
+  const dec = s => s.replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"');
+  const blocks = text.match(/<STMTTRN>[\s\S]*?(?=<\/STMTTRN>|<STMTTRN>|<\/BANKTRANLIST>)/gi) || [];
+  const items = [];
+  blocks.forEach(b=>{
+    const dt = tag(b,'DTPOSTED'), amt = parseFloat(tag(b,'TRNAMT').replace(',','.'));
+    if(!dt || isNaN(amt) || amt===0) return;
+    items.push({
+      id: items.length, fitid: tag(b,'FITID'),
+      data: dt.substr(0,4)+'-'+dt.substr(4,2)+'-'+dt.substr(6,2),
+      memo: dec(tag(b,'MEMO')), nome: dec(tag(b,'NAME')), valor: amt
+    });
+  });
+  const ds = tag(text,'DTSTART'), de = tag(text,'DTEND');
+  const bank = tag(text,'ORG'), acct = tag(text,'ACCTID');
+  items.sort((a,b)=> a.data<b.data?-1:a.data>b.data?1:a.id-b.id);
+  let ym = ds ? ds.substr(0,4)+'-'+ds.substr(4,2) : (items[0]?items[0].data.substr(0,7):'');
+  return {items, ym, start:ds, end:de, bank, acct};
+}
+function fxParseContabRows(rows){
+  // rows: array de arrays de texto. Procura linha com cabeçalho mm/aaaa
+  let hi = rows.findIndex(r => r && r.filter(c=>/^\d{2}\/\d{4}$/.test(String(c||'').trim())).length>=1);
+  if(hi<0) return null;
+  const head = rows[hi].map(c=>String(c||'').trim());
+  const colIdx = []; const months = [];
+  head.forEach((h,i)=>{ if(/^\d{2}\/\d{4}$/.test(h)){ colIdx.push(i); months.push(h); } });
+  const num = v => { if(typeof v==='number') return v; const s=String(v||'').trim(); if(!s) return 0;
+    const n = parseFloat(s.replace(/\./g,'').replace(',','.')); return isNaN(n)?0:n; };
+  const out = [];
+  for(let i=hi+1;i<rows.length;i++){
+    const r = rows[i]; if(!r) continue;
+    const label = String(r[0]||'').replace(/\s+/g,' ').trim(); if(!label) continue;
+    out.push([label, colIdx.map(ci=>num(r[ci]))]);
+  }
+  if(!out.some(r=>ctKey(r[0])==='entradas')) return null;
+  return {months, rows:out, fonte:'exportação importada em '+new Date().toLocaleDateString('pt-BR')};
+}
+function fxParseContabHTML(text){
+  const doc = new DOMParser().parseFromString(text,'text/html');
+  const rows = [...doc.querySelectorAll('tr')].map(tr=>[...tr.querySelectorAll('th,td')].map(td=>td.textContent.replace(/\s+/g,' ').trim()));
+  return fxParseContabRows(rows);
+}
+
+function fxHandleFiles(files){
+  [...files].forEach(file=>{
+    const rd = new FileReader();
+    rd.onload = e => {
+      const buf = e.target.result;
+      const name = file.name.toLowerCase();
+      let text = null;
+      if(/\.(ofx|xls|htm|html|txt)$/.test(name)) text = decodeBuf(buf);
+      try{
+        if(text && /<OFX>|OFXHEADER/i.test(text)){
+          const o = fxParseOFX(text);
+          if(!o.items.length) throw new Error('Nenhum lançamento encontrado no OFX.');
+          fx.ofx = o; o.items.forEach(fxClassify);
+          setStatus('fxStOfx', `✓ ${o.items.length} lançamentos · ${fxMonthLabel(o.ym)}`, true);
+        } else if(text && /<table/i.test(text)){
+          const c = fxParseContabHTML(text);
+          if(!c) throw new Error('Não reconheci a exportação da contabilidade.');
+          fxSetContab(c);
+        } else {
+          const wb = XLSX.read(buf,{type:'array',cellDates:true});
+          const ws = wb.Sheets[wb.SheetNames[0]];
+          const rows = XLSX.utils.sheet_to_json(ws,{header:1,defval:null,raw:false});
+          const res = processSalesRows(rows);
+          if(!res.error){ fxSetSales(res.items); }
+          else {
+            const c = fxParseContabRows(rows.map(r=>(r||[]).map(v=>v==null?'':String(v))));
+            if(c) fxSetContab(c); else throw new Error(res.error);
+          }
+        }
+      }catch(err){ alert('Erro ao ler "'+file.name+'": '+err.message); }
+      fxRender();
+    };
+    rd.readAsArrayBuffer(file);
+  });
+}
+function setStatus(id, txt, ok){ const el=document.getElementById(id); el.textContent=txt; el.classList.toggle('ok',!!ok); }
+function fxMonthLabel(ym){ if(!ym) return '—'; const [y,m]=ym.split('-'); return MES_NOME[+m-1]+'/'+y; }
+
+function fxSetSales(items){
+  fx.sales = items;
+  const ds = items.map(s=>s.dt).sort((a,b)=>a-b);
+  setStatus('fxStSales', `✓ ${items.length} vendas · ${fmtDateBR(ds[0])} a ${fmtDateBR(ds[ds.length-1])}`, true);
+  // alimenta também a aba "Vendas (sistema)"
+  try{
+    salesRaw = items; initSalesFilters();
+    document.getElementById('salesEmpty').classList.add('hidden');
+    document.getElementById('salesResult').classList.remove('hidden');
+    renderSalesAll();
+  }catch(e){ console.warn('Aba Vendas não atualizada:', e); }
+}
+function fxSetContab(c){
+  fx.contab = c;
+  lsSet(CONTAB_LS_KEY, c);
+  const el = document.getElementById('fxStContab');
+  el.innerHTML = `✓ ${c.months[0]} a ${c.months[c.months.length-1]} · salvo. <a href="#" id="fxReload">Recarregar para atualizar gráficos</a>`;
+  el.classList.add('ok');
+  document.getElementById('fxReload').onclick = ev => { ev.preventDefault(); location.reload(); };
+}
+
+/* ---------- classificação ---------- */
+function fxKey(it){ return (it.valor>0?'C|':'D|') + ctKey(it.nome || it.memo.replace(/^[^:]*:/,'')); }
+function fxRuleCat(it){
+  const t = ctKey(it.memo+' '+it.nome), cred = it.valor>0, abs = Math.abs(it.valor);
+  const has = (...w) => w.some(x => t.includes(x));
+  if(cred){
+    if(has('credito domicilio cartao','stone','cielo','getnet','rede ')) return ['RECEBIMENTOS DE CLIENTES','regra'];
+    if(has('pix recebido') && has('lavanderia fast')) return [fxCfg.mpIn,'regra','Transferência dos PIX que caem no Mercado Pago'];
+    if(has('rendimento','remuneracao')) return ['RENDIMENTOS FINANCEIROS','regra'];
+    if(has('pix recebido','ted recebida','transferencia recebida')) return ['OUTROS RECEBIMENTOS','revisar','Entrada fora do padrão — confirme a origem'];
+    return ['', 'revisar'];
+  }
+  if(has('v b g silva franchising','vbg silva','lavateria franchising'))
+    return abs<=500 ? ['PROPAGANDA E MARKETING','regra','Fundo de propaganda da franquia'] : ['PAGAMENTO DE FORNECEDORES','regra','Royalties'];
+  if(has('rafael alves justen')) return ['SERVIÇOS DE TERCEIROS','regra'];
+  if(has('maxman')) return ['PROPAGANDA E MARKETING','revisar','Mesma categoria usada pela contabilidade em out/2026 (deduzido) — confirme'];
+  if(has('vm tecnologia','galax pay')) return ['DESPESAS COM SOFTWARES','regra'];
+  if(has('enel','ampla','saneamento','rio mais','giga mais','sumicity','fibra','telefon')) return ['ÁGUA,LUZ,ENERGIA,INTERNET/TELEFONE','regra'];
+  if(has('onix negocios','imobiliar','aluguel','correta friburg')) return ['ALUGUÉIS','regra'];
+  if(has('simples nacional')) return ['DAS - SIMPLES NACIONAL','regra'];
+  if(has('darf')) return ['IMPOSTOS E TAXAS DIVERSOS','revisar','Confira no DARF qual tributo foi pago (ex.: GPS - INSS, IRRF)'];
+  if(has('seguro','sura')) return ['DESPESAS COM SEGURO','regra'];
+  if(has('contabilivre','contabil')) return ['ASSESSORIA CONTÁBIL','regra'];
+  if(has('tarifa','cesta de servico','pacote de servico')) return ['TARIFAS BANCÁRIAS','regra'];
+  if(has('juros','multa')) return ['MULTA/JUROS','revisar'];
+  if(has('mercado pago')) return ['OUTRAS DESPESAS','revisar','Envio ao Mercado Pago — confirme a finalidade'];
+  if(has('kelly','alex mendes')) return ['ANTECIPAÇÃO DE LUCROS','revisar','Retirada de sócio?'];
+  return ['', 'revisar', 'Sem regra — escolha a categoria'];
+}
+function fxClassify(it){
+  const k = fxKey(it);
+  if(fxRules[k]){ it.cat = fxRules[k]; it.src = 'memória'; it.note = 'Escolha memorizada'; return; }
+  const [cat, src, note] = fxRuleCat(it);
+  it.cat = cat; it.src = src; it.note = note || '';
+}
+
+/* ---------- renderização ---------- */
+function catSelectHtml(sel){
+  let h = `<option value="">— escolher —</option>`;
+  Object.entries(CL_CATS).forEach(([g,list])=>{
+    h += `<optgroup label="${g}">` + list.map(c=>`<option${c===sel?' selected':''}>${esc(c)}</option>`).join('') + `</optgroup>`;
+  });
+  return h;
+}
+function fxSigned(cat, items){ return items.filter(i=>i.cat===cat).reduce((s,i)=>s+i.valor,0); }
+
+function fxRender(){
+  const has = fx.ofx || fx.sales;
+  ['fxKpis','fxBottom'].forEach(id=>document.getElementById(id).classList.toggle('hidden', !has));
+  document.getElementById('fxStmtPanel').classList.toggle('hidden', !fx.ofx);
+  fxRenderKpis(); fxRenderTable(); fxRenderSummary(); fxRenderNF(); fxRenderContab();
+}
+function fxNF(){
+  if(!fx.sales) return null;
+  const isV = s => normStr(s.pagamento) === 'voucher';
+  const tot = fx.sales.reduce((s,x)=>s+x.valor,0);
+  const vou = fx.sales.filter(isV);
+  const vTot = vou.reduce((s,x)=>s+x.valor,0);
+  const by = {};
+  fx.sales.filter(s=>!isV(s)).forEach(s=>{
+    const p = normStr(s.pagamento);
+    const k = p==='tef' ? ('Cartão · '+(s.tipoCartao||'—')) : p==='qrcode' ? 'PIX (QR Code)' : (s.pagamento||'Outros');
+    by[k] = by[k]||{n:0,v:0}; by[k].n++; by[k].v+=s.valor;
+  });
+  const vBy = {};
+  vou.forEach(s=>{ const k = s.voucher||'(sem categoria)'; vBy[k]=vBy[k]||{n:0,v:0}; vBy[k].n++; vBy[k].v+=s.valor; });
+  return {n:fx.sales.length, tot, vn:vou.length, vTot, nf: Math.round((tot-vTot)*100)/100, by, vBy};
+}
+function fxRenderKpis(){
+  const nf = fxNF();
+  document.getElementById('fxNfVal').textContent = nf ? brl(nf.nf) : '—';
+  document.getElementById('fxNfNote').innerHTML = nf
+    ? `${nf.n-nf.vn} vendas · total ${brl(nf.tot)} menos ${nf.vn} vouchers (${brl(nf.vTot)})` : 'Envie o relatório de vendas.';
+  if(fx.ofx){
+    const it = fx.ofx.items;
+    const ins = it.filter(i=>i.valor>0), outs = it.filter(i=>i.valor<0);
+    const rev = it.filter(i=>i.src==='revisar' || !i.cat);
+    document.getElementById('fxInVal').textContent = brl(ins.reduce((s,i)=>s+i.valor,0));
+    document.getElementById('fxInNote').textContent = `${ins.length} créditos em ${fxMonthLabel(fx.ofx.ym)}`;
+    document.getElementById('fxOutVal').textContent = brl(-outs.reduce((s,i)=>s+i.valor,0));
+    document.getElementById('fxOutNote').textContent = `${outs.length} débitos · saldo do mês ${brl(it.reduce((s,i)=>s+i.valor,0))}`;
+    document.getElementById('fxRevVal').textContent = rev.length;
+    document.getElementById('fxRevNote').textContent = rev.length ? 'lançamentos marcados em amarelo' : 'tudo classificado ✓';
+  } else {
+    ['fxInVal','fxOutVal','fxRevVal'].forEach(id=>document.getElementById(id).textContent='—');
+    ['fxInNote','fxOutNote','fxRevNote'].forEach(id=>document.getElementById(id).textContent='Envie o extrato OFX.');
+  }
+}
+function fxRenderTable(){
+  if(!fx.ofx) return;
+  const f = document.getElementById('fxFilter').value;
+  const o = fx.ofx;
+  document.getElementById('fxStmtSub').textContent =
+    `${o.bank||'Banco'} · conta ${o.acct||'—'} · ${fxMonthLabel(o.ym)} · ${o.items.length} lançamentos`;
+  const rows = o.items.filter(i => f==='all' || (f==='review' && (i.src==='revisar'||!i.cat)) || (f==='credit'&&i.valor>0) || (f==='debit'&&i.valor<0));
+  let h = `<thead><tr><th>Data</th><th>Descrição</th><th class="r">Valor</th><th>Categoria Contabilivre</th><th>Origem</th></tr></thead><tbody>`;
+  rows.forEach(i=>{
+    const rv = i.src==='revisar' || !i.cat;
+    const [y,m,d] = i.data.split('-');
+    h += `<tr class="${rv?'fx-rev':''}">
+      <td class="nw">${d}/${m}</td>
+      <td><div class="fx-desc">${esc(i.memo||i.nome)}</div>${i.note?`<div class="fx-sub">${esc(i.note)}</div>`:''}</td>
+      <td class="r nw ${i.valor<0?'neg':'pos'}">${brl(i.valor)}</td>
+      <td><select class="fx-cat" data-id="${i.id}">${catSelectHtml(i.cat)}</select></td>
+      <td><span class="fx-badge ${rv?'rev':i.src==='manual'||i.src==='memória'?'mem':'ok'}">${rv?'revisar':i.src}</span></td>
+    </tr>`;
+  });
+  h += '</tbody>';
+  document.getElementById('fxStmtTable').innerHTML = h;
+}
+function fxSummaryRows(){
+  const items = fx.ofx ? fx.ofx.items : [];
+  const map = {};
+  items.forEach(i=>{ const c=i.cat||'(sem categoria)'; map[c]=map[c]||{n:0,v:0}; map[c].n++; map[c].v+=i.valor; });
+  const order = Object.keys(CL_CATS);
+  return Object.entries(map).map(([c,o])=>({cat:c, grupo:CL_GROUP_OF[c]||'—', n:o.n, v:Math.round(o.v*100)/100}))
+    .sort((a,b)=> (order.indexOf(a.grupo)-order.indexOf(b.grupo)) || (a.v-b.v));
+}
+function fxRenderSummary(){
+  const el = document.getElementById('fxSumTable');
+  if(!fx.ofx){ el.innerHTML = '<tbody><tr><td class="fx-sub">Envie o extrato OFX.</td></tr></tbody>'; return; }
+  const rows = fxSummaryRows();
+  let h = '<thead><tr><th>Grupo</th><th>Categoria</th><th class="r">Qtd</th><th class="r">Total</th></tr></thead><tbody>';
+  rows.forEach(r=>{ h += `<tr class="${r.grupo==='—'?'fx-rev':''}"><td class="fx-sub">${esc(r.grupo)}</td><td>${esc(r.cat)}</td><td class="r">${r.n}</td><td class="r nw ${r.v<0?'neg':'pos'}">${brl(r.v)}</td></tr>`; });
+  const tin = fx.ofx.items.filter(i=>i.valor>0).reduce((s,i)=>s+i.valor,0);
+  const tout = fx.ofx.items.filter(i=>i.valor<0).reduce((s,i)=>s+i.valor,0);
+  h += `<tr class="tot"><td></td><td>Total de entradas</td><td></td><td class="r pos">${brl(tin)}</td></tr>
+        <tr class="tot"><td></td><td>Total de saídas</td><td></td><td class="r neg">${brl(tout)}</td></tr>
+        <tr class="tot"><td></td><td>Saldo do mês</td><td></td><td class="r">${brl(tin+tout)}</td></tr></tbody>`;
+  el.innerHTML = h;
+}
+function fxRenderNF(){
+  const nf = fxNF();
+  const el = document.getElementById('fxNfTable'), rec = document.getElementById('fxRecTable');
+  if(!nf){ el.innerHTML=''; rec.innerHTML=''; document.getElementById('fxNfSub').textContent='Envie o relatório de vendas do sistema.'; return; }
+  const ds = fx.sales.map(s=>s.dt).sort((a,b)=>a-b);
+  document.getElementById('fxNfSub').textContent = `Vendas de ${fmtDateBR(ds[0])} a ${fmtDateBR(ds[ds.length-1])} · regra: receita = tudo, menos vouchers`;
+  let h = '<tbody>';
+  h += `<tr><td>Total de vendas no sistema</td><td class="r">${nf.n}</td><td class="r nw">${brl(nf.tot)}</td></tr>`;
+  Object.entries(nf.vBy).forEach(([k,o])=>{ h += `<tr><td class="fx-sub">(−) Voucher · ${esc(k)}</td><td class="r">${o.n}</td><td class="r nw neg">${brl(-o.v)}</td></tr>`; });
+  h += `<tr class="tot hl"><td>Valor da nota fiscal do mês</td><td class="r">${nf.n-nf.vn}</td><td class="r nw">${brl(nf.nf)}</td></tr>`;
+  Object.entries(nf.by).sort((a,b)=>b[1].v-a[1].v).forEach(([k,o])=>{ h += `<tr><td class="fx-sub">dos quais ${esc(k)}</td><td class="r">${o.n}</td><td class="r nw">${brl(o.v)}</td></tr>`; });
+  el.innerHTML = h + '</tbody>';
+
+  // conciliação
+  if(!fx.ofx){ rec.innerHTML = '<tbody><tr><td class="fx-sub">Envie também o OFX para comparar com o banco.</td></tr></tbody>'; return; }
+  const it = fx.ofx.items;
+  const sum = f => it.filter(f).reduce((s,i)=>s+i.valor,0);
+  const t = i => ctKey(i.memo+' '+i.nome);
+  const bankCred = sum(i=>i.valor>0 && /cartao de credito/.test(t(i)));
+  const bankDeb  = sum(i=>i.valor>0 && /cartao de debito/.test(t(i)));
+  const bankPix  = sum(i=>i.valor>0 && t(i).includes('pix recebido') && t(i).includes('lavanderia fast'));
+  const sv = k => fx.sales.filter(s=>normStr(s.pagamento)!=='voucher').filter(k).reduce((s,x)=>s+x.valor,0);
+  const vCred = sv(s=>normStr(s.pagamento)==='tef' && normStr(s.tipoCartao).startsWith('cred'));
+  const vDeb  = sv(s=>normStr(s.pagamento)==='tef' && normStr(s.tipoCartao).startsWith('deb'));
+  const vPix  = sv(s=>normStr(s.pagamento)==='qrcode');
+  const line = (lbl, v, b) => { const d=b-v; return `<tr><td>${lbl}</td><td class="r nw">${brl(v)}</td><td class="r nw">${brl(b)}</td><td class="r nw ${d<0?'neg':'pos'}">${brl(d)}${v?` <span class="fx-sub">(${pctf(d/v)})</span>`:''}</td></tr>`; };
+  rec.innerHTML = `<thead><tr><th></th><th class="r">Vendas</th><th class="r">Banco</th><th class="r">Diferença</th></tr></thead><tbody>
+    ${line('Cartão de crédito (Stone)', vCred, bankCred)}
+    ${line('Cartão de débito (Stone)', vDeb, bankDeb)}
+    ${line('PIX (Mercado Pago → banco)', vPix, bankPix)}
+    </tbody>`;
+}
+
+/* Linha da exportação contábil correspondente a cada categoria */
+function fxContabLine(cat){
+  const g = CL_GROUP_OF[cat];
+  if(g==='RECEITA') return cat==='RENDIMENTOS FINANCEIROS' ? 'rendimentos financeiros' : 'entradas';
+  if(g==='IMPOSTO') return 'impostos';
+  if(cat==='DEVOLUÇÃO DE CLIENTES') return 'devolucoes';
+  if(g==='FINANCEIRO') return null;
+  return ctKey(cat);
+}
+function fxRenderContab(){
+  const panel = document.getElementById('fxContabPanel');
+  const c = fx.contab || (fx.ofx ? CONTAB : null);
+  if(!fx.ofx || !c){ panel.classList.add('hidden'); return; }
+  const [y,m] = fx.ofx.ym.split('-'); const col = c.months.indexOf(m+'/'+y);
+  panel.classList.remove('hidden');
+  const fonte = fx.contab ? 'exportação enviada agora' : 'última exportação salva no dashboard ('+(c.fonte||'')+')';
+  if(col<0){
+    document.getElementById('fxContabSub').textContent = `A exportação (${fonte}) não tem a coluna ${m}/${y}. Gere uma nova exportação depois que a contabilidade lançar o mês.`;
+    document.getElementById('fxContabTable').innerHTML=''; document.getElementById('fxContabNote').textContent=''; return;
+  }
+  document.getElementById('fxContabSub').textContent = `Comparando a classificação do dashboard com o que a contabilidade lançou em ${m}/${y} · fonte: ${fonte}`;
+  const mine = {}, labels = {};
+  fx.ofx.items.forEach(i=>{ const k = i.cat ? fxContabLine(i.cat) : 'nao categorizado'; if(k==null) return; mine[k]=(mine[k]||0)+i.valor; });
+  const skip = new Set(['entradas liquidas','saidas','total das saidas','resultado operacional de caixa','resultado nao operacional de caixa',
+    'resultado liquido de caixa','outras origens de caixa','total das origens','destinacoes de caixa','total das destinacoes',
+    'resultado de caixa apos origens e destinacoes','saldo anterior','saldo final']);
+  const theirs = {};
+  c.rows.forEach(r=>{ const k=ctKey(r[0]); if(skip.has(k)) return; theirs[k]=(r[1][col]||0); labels[k]=r[0].replace(/^\([^)]*\)\s*/,''); });
+  Object.keys(mine).forEach(k=>{ if(!(k in labels)) labels[k] = k.toUpperCase(); });
+  const keys = [...new Set([...Object.keys(mine),...Object.keys(theirs)])].filter(k=>Math.abs(mine[k]||0)>0.004 || Math.abs(theirs[k]||0)>0.004);
+  let ok=0, bad=0;
+  let h = '<thead><tr><th>Linha da contabilidade</th><th class="r">Dashboard</th><th class="r">Contabilidade</th><th class="r">Diferença</th></tr></thead><tbody>';
+  keys.forEach(k=>{
+    const a = Math.round((mine[k]||0)*100)/100, b = Math.round((theirs[k]||0)*100)/100, d = Math.round((a-b)*100)/100;
+    const eq = Math.abs(d) < 0.01; eq?ok++:bad++;
+    h += `<tr class="${eq?'':'fx-rev'}"><td>${esc(labels[k])}</td><td class="r nw">${brl(a)}</td><td class="r nw">${brl(b)}</td><td class="r nw">${eq?'<span class="fx-badge ok">igual</span>':brl(d)}</td></tr>`;
+  });
+  document.getElementById('fxContabTable').innerHTML = h + '</tbody>';
+  const transf = fx.ofx.items.filter(i=>CL_GROUP_OF[i.cat]==='FINANCEIRO').reduce((s,i)=>s+i.valor,0);
+  document.getElementById('fxContabNote').innerHTML = `${ok} linha(s) iguais · <b>${bad}</b> com diferença.` +
+    (transf? ` Lançamentos do grupo FINANCEIRO (${brl(transf)}) não aparecem no relatório de caixa da contabilidade.`:'');
+}
+
+/* ---------- eventos ---------- */
+['fxInOfx','fxInSales','fxInContab'].forEach(id=>{
+  const inp = document.getElementById(id);
+  inp.addEventListener('change', e=>{ fxHandleFiles(e.target.files); e.target.value=''; });
+  const box = inp.closest('.upload-box');
+  ['dragenter','dragover'].forEach(ev=>box.addEventListener(ev,e=>{e.preventDefault();box.classList.add('dragging');}));
+  ['dragleave','drop'].forEach(ev=>box.addEventListener(ev,e=>{e.preventDefault();box.classList.remove('dragging');}));
+  box.addEventListener('drop', e=>fxHandleFiles(e.dataTransfer.files));
+});
+document.getElementById('fxFilter').addEventListener('change', fxRenderTable);
+document.getElementById('fxMpSetting').value = fxCfg.mpIn;
+document.getElementById('fxMpSetting').addEventListener('change', e=>{
+  fxCfg.mpIn = e.target.value; lsSet(FX_CFG_KEY, fxCfg);
+  if(fx.ofx){ fx.ofx.items.forEach(i=>{ if(i.src!=='manual' && i.src!=='memória') fxClassify(i); }); fxRender(); }
+});
+document.getElementById('fxStmtTable').addEventListener('change', e=>{
+  if(!e.target.classList.contains('fx-cat')) return;
+  const it = fx.ofx.items.find(i=>i.id===+e.target.dataset.id); if(!it) return;
+  it.cat = e.target.value; it.src = it.cat ? 'manual' : 'revisar'; it.note = it.cat ? 'Alterado por você — memorizado para este favorecido' : '';
+  const k = fxKey(it);
+  if(it.cat){ fxRules[k] = it.cat; } else { delete fxRules[k]; }
+  lsSet(FX_RULES_KEY, fxRules);
+  // aplica a mesma escolha aos outros lançamentos do mesmo favorecido ainda não alterados
+  fx.ofx.items.forEach(o=>{ if(o!==it && fxKey(o)===k && o.src!=='manual'){ o.cat=it.cat; o.src='memória'; o.note='Escolha memorizada'; } });
+  fxRenderKpis(); fxRenderTable(); fxRenderSummary(); fxRenderContab();
+});
+function fxCopy(text, btn){
+  const done = ()=>{ const t=btn.textContent; btn.textContent='Copiado ✓'; setTimeout(()=>btn.textContent=t,1500); };
+  if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(()=>prompt('Copie:',text));
+  else prompt('Copie:', text);
+}
+document.getElementById('fxCopyNf').addEventListener('click', e=>{
+  const nf = fxNF(); if(!nf) return;
+  fxCopy(nf.nf.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}), e.target);
+});
+document.getElementById('fxCopySummary').addEventListener('click', e=>{
+  if(!fx.ofx) return;
+  const nf = fxNF();
+  let t = `Fechamento ${fxMonthLabel(fx.ofx.ym)} — Lavateria Jd. Mariléa\n`;
+  if(nf) t += `Nota fiscal do mês (vendas sem vouchers): ${brl(nf.nf)}\n`;
+  t += '\n';
+  fxSummaryRows().forEach(r=>{ t += `${r.cat}: ${brl(r.v)} (${r.n})\n`; });
+  fxCopy(t, e.target);
+});
+document.getElementById('fxExportCsv').addEventListener('click', ()=>{
+  if(!fx.ofx) return;
+  const n = v => v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2,useGrouping:false});
+  const q = s => '"'+String(s||'').replace(/"/g,'""')+'"';
+  let csv = 'Data;Descrição;Favorecido;Valor;Grupo;Categoria;Situação\n';
+  fx.ofx.items.forEach(i=>{ const [y,m,d]=i.data.split('-');
+    csv += [`${d}/${m}/${y}`, q(i.memo), q(i.nome), n(i.valor), CL_GROUP_OF[i.cat]||'', q(i.cat), (i.src==='revisar'||!i.cat)?'revisar':'ok'].join(';')+'\n'; });
+  csv += '\nResumo por categoria\nGrupo;Categoria;Qtd;Total\n';
+  fxSummaryRows().forEach(r=>{ csv += [r.grupo, q(r.cat), r.n, n(r.v)].join(';')+'\n'; });
+  const nf = fxNF(); if(nf) csv += `\nNota fiscal (vendas sem vouchers);;;${n(nf.nf)}\n`;
+  const blob = new Blob(['﻿'+csv],{type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = `fechamento-${fx.ofx.ym}.csv`; document.body.appendChild(a); a.click(); a.remove();
+});
+
+/* ====================================================================== */
+/*  LUCRO × INVESTIMENTOS + BREAK-EVEN                                     */
+/* ====================================================================== */
+/* Selic acumulada no mês (%) — Banco Central, SGS série 4390.
+   Fonte: api.bcb.gov.br/dados/serie/bcdata.sgs.4390 · consultado em 07/11/2026 */
+const SELIC_4390 = {
+  '2024-01':0.97,'2024-02':0.80,'2024-03':0.83,'2024-04':0.89,'2024-05':0.83,'2024-06':0.79,
+  '2024-07':0.91,'2024-08':0.87,'2024-09':0.84,'2024-10':0.93,'2024-11':0.79,'2024-12':0.93,
+  '2025-01':1.01,'2025-02':0.99,'2025-03':0.96,'2025-04':1.06,'2025-05':1.14,'2025-06':1.10,
+  '2025-07':1.28,'2025-08':1.16,'2025-09':1.22,'2025-10':1.28,'2025-11':1.05,'2025-12':1.22,
+  '2026-01':1.16,'2026-02':1.00,'2026-03':1.21,'2026-04':1.09,'2026-05':1.07,'2026-06':1.12,
+  '2026-07':1.22,'2026-08':1.09,'2026-09':1.08,'2026-10':1.07
+};
+const IV_KEY = 'lavateria_bench_v1';
+const IV_DEFAULTS = {
+  cdi:null, cdiSrc:'Clique em "Buscar" (BCB · série 4391) ou digite',
+  usd0:4.8413, usd0Src:'PTAX venda 29/12/2023',
+  usd1:null, usd1Src:'Clique em "Buscar" (BCB · série 1) ou digite',
+  ibov0:134185, ibov0Src:'Fechamento 28/12/2023 · confirme na B3',
+  ibov1:205083, ibov1Src:'Investing.com, 23/10/2026 · atualizar com o fechamento de out',
+  chk:{usd0:true, ibov0:true, ibov1:true}
+};
+let iv = Object.assign({}, IV_DEFAULTS, lsGet(IV_KEY, {}));
+iv.chk = Object.assign({}, IV_DEFAULTS.chk, (lsGet(IV_KEY,{})||{}).chk||{});
+
+const INVEST = 184476.64;
+const ymOf = i => { const y = 2024 + Math.floor(i/12), m = i%12+1; return y+'-'+String(m).padStart(2,'0'); };
+let LAST_REAL = projFlag.reduce((last,p,i)=>p?last:i, 0);   // índice do último mês real
+const REAL_LABEL = labelsAll[LAST_REAL];
+
+function ivNum(s){
+  if(s==null) return null; if(typeof s==='number') return s;
+  s = String(s).trim().replace(/[R$\s%]/g,''); if(!s) return null;
+  if(s.includes(',')) s = s.replace(/\./g,'').replace(',','.');
+  else if(/^\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g,'');
+  const n = parseFloat(s); return isNaN(n)?null:n;
+}
+function ivFmt(v, d){ return v==null ? '' : v.toLocaleString('pt-BR',{minimumFractionDigits:d,maximumFractionDigits:d}); }
+
+function ivBizSeries(){
+  const cum = []; let s = 0;
+  for(let i=0;i<=LAST_REAL;i++){ s += resAll[i]; cum.push(s); }
+  return cum;
+}
+function ivSelicSeries(){
+  const out = []; let f = 1;
+  for(let i=0;i<=LAST_REAL;i++){ const r = SELIC_4390[ymOf(i)]; if(r!=null) f *= 1 + r/100; out.push(f); }
+  return out;
+}
+
+/* Break-even estimado a partir da exportação contábil de 2026 */
+function ivBreakEven(){
+  const c = CONTAB, n = c.months.length;
+  const VAR = ['impostos','devolucoes','agua luz energia internet telefone','insumos de limpeza e outros','fretes'];
+  const skip = new Set(['entradas','entradas liquidas','saidas','total das saidas','resultado operacional de caixa','rendimentos financeiros',
+    'outras entradas','resultado nao operacional de caixa','resultado liquido de caixa','outras origens de caixa','emprestimo de socios',
+    'total das origens','destinacoes de caixa','antecipacao de lucros','total das destinacoes','resultado de caixa apos origens e destinacoes',
+    'saldo anterior','saldo final','nao categorizado']);
+  let fat = 0, vari = 0, fixo = 0; const comp = [];
+  CONTAB_MONTHLY.forEach(m=>fat+=m.fat);
+  c.rows.forEach(r=>{
+    const k = ctKey(r[0]); if(skip.has(k) || k.startsWith('distribuicao de lucros')) return;
+    const tot = -r[1].reduce((s,v)=>s+(v||0),0); if(Math.abs(tot)<0.01) return;
+    const isVar = VAR.includes(k);
+    if(isVar) vari += tot; else fixo += tot;
+    comp.push({nome:r[0].replace(/^\([^)]*\)\s*/,''), tot, isVar});
+  });
+  const mc = fat>0 ? 1 - vari/fat : 0;
+  const fixoMes = fixo / n;
+  return {fat, vari, fixo, mc, fixoMes, be: mc>0 ? fixoMes/mc : null, comp, n, periodo:c.months[0]+' a '+c.months[n-1]};
+}
+
+let ivChartBar, ivChartLine;
+function ivRender(){
+  const biz = ivBizSeries(), selic = ivSelicSeries();
+  const bizTot = biz[biz.length-1];
+  const nMeses = LAST_REAL+1;
+  const periodo = `dez/2023 → ${REAL_LABEL} (${nMeses} meses)`;
+  const fSelic = selic[selic.length-1];
+  const cdi = ivNum(iv.cdi), usd0 = ivNum(iv.usd0), usd1 = ivNum(iv.usd1), ib0 = ivNum(iv.ibov0), ib1 = ivNum(iv.ibov1);
+
+  document.getElementById('ivSelicAcc').textContent = pctf(fSelic-1,2);
+  const alts = [
+    {nome:'Negócio (lucro operacional)', ganho:bizTot, pct:bizTot/INVEST, cor:C.red, biz:true},
+    {nome:'Selic', ganho:INVEST*(fSelic-1), pct:fSelic-1, cor:C.blue},
+    {nome:'CDI', ganho: cdi!=null ? INVEST*cdi/100 : null, pct: cdi!=null ? cdi/100 : null, cor:C.blueMid},
+    {nome:'Dólar', ganho: (usd0&&usd1) ? INVEST*(usd1/usd0-1) : null, pct:(usd0&&usd1)? usd1/usd0-1 : null, cor:'#0E9F6E'},
+    {nome:'Ibovespa', ganho: (ib0&&ib1) ? INVEST*(ib1/ib0-1) : null, pct:(ib0&&ib1)? ib1/ib0-1 : null, cor:C.cyan}
+  ];
+  document.getElementById('ivCmpSub').textContent = `Ganho sobre o custo de aquisição de ${brl(INVEST)} · ${periodo}`;
+  const avail = alts.filter(a=>a.ganho!=null);
+  if(ivChartBar) ivChartBar.destroy();
+  ivChartBar = new Chart(document.getElementById('chInvCompare'),{
+    type:'bar',
+    data:{labels:avail.map(a=>a.nome), datasets:[{data:avail.map(a=>a.ganho), backgroundColor:avail.map(a=>a.cor), borderRadius:6, barThickness:30}]},
+    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>brl(c.raw)+' · '+pctf(avail[c.dataIndex].pct)}}},
+      scales:{x:{grid:{color:'#E6EAF7'},ticks:{callback:v=>'R$ '+(v/1000).toFixed(0)+'k'}},y:{grid:{display:false}}}}
+  });
+  let h = '<thead><tr><th></th><th class="r">Rentab.</th><th class="r">Ganho bruto</th><th class="r">Líq. aprox. (IR 15%)</th><th class="r">Negócio − alternativa</th></tr></thead><tbody>';
+  alts.forEach(a=>{
+    if(a.ganho==null){ h += `<tr><td>${a.nome}</td><td colspan="4" class="fx-sub">preencha os índices ao lado</td></tr>`; return; }
+    const liq = a.biz ? a.ganho : (a.ganho>0 ? a.ganho*0.85 : a.ganho);
+    const d = a.biz ? null : bizTot - liq;
+    h += `<tr class="${a.biz?'tot':''}"><td>${a.nome}</td><td class="r">${pctf(a.pct)}</td><td class="r nw">${brl(a.ganho)}</td><td class="r nw">${brl(liq)}</td>
+      <td class="r nw ${d==null?'':d>=0?'pos':'neg'}">${d==null?'—':brl(d)}</td></tr>`;
+  });
+  document.getElementById('ivCmpTable').innerHTML = h + `</tbody>`;
+  const best = avail.filter(a=>!a.biz).sort((a,b)=>b.ganho-a.ganho)[0];
+  document.getElementById('ivBestVal').textContent = best ? best.nome+' · '+brl(best.ganho) : '—';
+  document.getElementById('ivBestNote').innerHTML = best
+    ? (bizTot>=best.ganho*0.85 ? `O negócio <b>supera</b> a melhor alternativa líquida de IR.` : `O negócio está <b>${brl(best.ganho*0.85-bizTot)}</b> atrás da melhor alternativa (líquida de IR 15%).`)
+    : '—';
+
+  // linha mês a mês
+  if(ivChartLine) ivChartLine.destroy();
+  const L = labelsAll.slice(0, nMeses);
+  ivChartLine = new Chart(document.getElementById('chInvLine'),{
+    type:'line',
+    data:{labels:L, datasets:[
+      {label:'Lucro acumulado do negócio', data:biz, borderColor:C.red, backgroundColor:C.red, borderWidth:2.5, tension:.25, pointRadius:0},
+      {label:'Rendimento na Selic', data:selic.map(f=>INVEST*(f-1)), borderColor:C.blue, backgroundColor:C.blue, borderWidth:2.5, tension:.25, pointRadius:0, borderDash:[6,4]}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{position:'bottom',labels:{boxWidth:12}},tooltip:{callbacks:{label:c=>c.dataset.label+': '+brl(c.raw)}}},
+      scales:{x:{grid:{display:false},ticks:{maxTicksLimit:9,maxRotation:0}},y:{grid:{color:'#E6EAF7'},ticks:{callback:v=>'R$ '+(v/1000).toFixed(0)+'k'}}}}
+  });
+
+  // KPIs lucro + payback
+  const falta = INVEST - bizTot;
+  const ult12 = resAll.slice(Math.max(0,LAST_REAL-11), LAST_REAL+1);
+  const ritmo = ult12.reduce((s,v)=>s+v,0)/ult12.length;
+  const mesesFalta = ritmo>0 ? Math.ceil(falta/ritmo) : null;
+  document.getElementById('ivBizVal').textContent = brl(bizTot);
+  document.getElementById('ivBizNote').textContent = `jan/2024 a ${REAL_LABEL} · média ${brl(bizTot/nMeses)}/mês`;
+  document.getElementById('ivPbVal').textContent = falta>0 ? brl(falta) : 'Recuperado ✓';
+  document.getElementById('ivPbNote').textContent = falta>0
+    ? `${pctf(bizTot/INVEST)} já recuperado. No ritmo dos últimos 12 meses (${brl(ritmo)}/mês): ~${mesesFalta} meses (~${(mesesFalta/12).toLocaleString('pt-BR',{maximumFractionDigits:1})} anos).`
+    : 'O lucro acumulado já cobriu o investimento.';
+  const pf = document.getElementById('ivPbFill'); const pp = Math.min(100, bizTot/INVEST*100);
+  pf.style.width = Math.max(pp,8)+'%'; pf.textContent = pp.toFixed(0)+'%';
+  document.getElementById('ivPbVerdict').innerHTML = falta>0
+    ? `Faltam <b>${brl(falta)}</b> para o lucro acumulado igualar o investimento de ${brl(INVEST)}. Estimativa: <b>${mesesFalta ? '~'+mesesFalta+' meses' : 'indefinida (ritmo ≤ 0)'}</b>, mantido o ritmo médio dos últimos 12 meses.`
+    : `Payback atingido.`;
+
+  // break-even
+  const be = ivBreakEven();
+  const recent = []; for(let i=LAST_REAL;i>=0 && recent.length<6;i--) recent.push(fatAll[i]);
+  const fatRec = recent.reduce((s,v)=>s+v,0)/recent.length;
+  window.__BE = be.be; window.__FATREC = fatRec;
+  if(be.be) BREAKEVEN_MENSAL = Math.round(be.be);
+  const marg = be.be ? fatRec/be.be - 1 : null;
+  document.getElementById('ivBeVal').textContent = be.be ? brl(be.be)+'/mês' : '—';
+  document.getElementById('ivBeNote').innerHTML = be.be ? (marg>=0
+    ? `<b style="color:var(--good)">Atingido</b> · faturamento médio ${brl(fatRec)} está ${pctf(marg,0)} acima`
+    : `<b style="color:var(--lav-red)">Faltam ${brl(be.be-fatRec)}/mês</b> de faturamento`) : '—';
+  document.getElementById('ivBeSub').textContent = `Estimativa com os lançamentos da contabilidade (${be.periodo}). Fórmula: custos fixos médios ÷ margem de contribuição.`;
+  let bh = '<tbody>';
+  bh += `<tr><td>Faturamento no período (${be.n} meses)</td><td class="r nw">${brl(be.fat)}</td></tr>`;
+  bh += `<tr><td>Custos variáveis <span class="fx-sub">(impostos, água/luz/internet, insumos, fretes, devoluções)</span></td><td class="r nw">${brl(be.vari)}</td></tr>`;
+  bh += `<tr><td>Margem de contribuição</td><td class="r">${pctf(be.mc)}</td></tr>`;
+  bh += `<tr><td>Custos fixos médios por mês <span class="fx-sub">(${be.comp.filter(x=>!x.isVar).map(x=>x.nome.toLowerCase()).join(', ')})</span></td><td class="r nw">${brl(be.fixoMes)}</td></tr>`;
+  bh += `<tr class="tot hl"><td>Faturamento de equilíbrio</td><td class="r nw">${be.be?brl(be.be):'—'}</td></tr>`;
+  bh += `<tr><td>Faturamento médio dos últimos 6 meses reais</td><td class="r nw">${brl(fatRec)}</td></tr></tbody>`;
+  document.getElementById('ivBeTable').innerHTML = bh;
+  const scale = Math.max(be.be||0, fatRec)*1.35 || 1;
+  const bf = document.getElementById('ivBeFill');
+  bf.style.width = (fatRec/scale*100)+'%'; bf.textContent = be.be ? (fatRec/be.be*100).toFixed(0)+'%' : '';
+  document.getElementById('ivBeMarker').style.left = ((be.be||0)/scale*100)+'%';
+  document.getElementById('ivBeVerdict').innerHTML = !be.be ? '—' : marg>=0
+    ? `<b>Sim, o break-even mensal foi atingido.</b> O faturamento médio recente cobre os custos com folga de ${brl(fatRec-be.be)}/mês. Essa folga é o que paga o investimento (veja o payback abaixo).`
+    : `Ainda abaixo do equilíbrio: faltam <b>${brl(be.be-fatRec)}/mês</b> de faturamento.`;
+
+  ivSyncOverview({bizTot, falta, ritmo, mesesFalta, fSelic, be, fatRec, nMeses});
+}
+
+/* Atualiza os cartões fixos da Visão geral / Desempenho com os números atuais */
+function ivSyncOverview(o){
+  const set = (id, html) => { const el=document.getElementById(id); if(el) el.innerHTML = html; };
+  const mil = v => 'R$ '+(v/1000).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+'<span class="un"> mil</span>';
+  let fatTot = 0; for(let i=0;i<=LAST_REAL;i++) fatTot += fatAll[i];
+  set('hdrPeriodo', `Jan/2024 → ${REAL_LABEL.replace(/^./,c=>c.toUpperCase())}`);
+  set('hdrMeses', `${o.nMeses} meses operados`);
+  set('ovFatAcc', mil(fatTot));
+  set('ovFatAccNote', `Receita real em ${o.nMeses} meses · média ${brl(fatTot/o.nMeses)}/mês. 2026 pela exportação da contabilidade (caixa).`);
+  set('ovResAcc', mil(o.bizTot));
+  set('ovResAccNote', 'Receita − despesas operacionais. Distribuições de lucro aos sócios não entram como despesa.');
+  set('ovPbVal', mil(Math.max(0,o.falta)));
+  set('ovPbNote', o.falta>0 ? `Falta ${pctf(o.falta/INVEST,0)} do capital. No ritmo dos últimos 12 meses: ~${o.mesesFalta} meses.` : 'Investimento recuperado.');
+  set('ovBeVal', o.be.be ? brl(o.be.be).replace(/,\d\d$/,'') : '—');
+  set('ovBeNote', `Estimado com dados da contabilidade (${o.be.periodo}). Faturamento médio recente: ${brl(o.fatRec)}.`);
+  set('ovMcVal', pctf(o.be.mc));
+  set('ovMcNote', 'Receita menos impostos, água/luz/internet, insumos, fretes e devoluções (contabilidade 2026).');
+  set('ovOppVal', 'R$ '+(INVEST*(o.fSelic-1)/1000).toLocaleString('pt-BR',{minimumFractionDigits:1,maximumFractionDigits:1})+' mil');
+  set('ovOppNote', `Quanto os R$ 184,5 mil renderiam na Selic (dez/23 → ${REAL_LABEL}). Lucro do negócio: ${brl(o.bizTot)}.`);
+  set('ovIntro', `<b>Leitura rápida:</b> em ${o.nMeses} meses o negócio gerou <b>${brl(o.bizTot)}</b> de lucro operacional, contra <b>${brl(INVEST*(o.fSelic-1))}</b> que o mesmo capital renderia na Selic. O break-even mensal ${o.be.be && o.fatRec>=o.be.be ? '<b>foi atingido</b>' : 'ainda não foi atingido'}; faltam <b>${brl(Math.max(0,o.falta))}</b> para recuperar o investimento.`);
+  // card 2026 em Desempenho
+  const n26 = REAL_2026; let f26=0, r26=0; for(let i=0;i<n26;i++){ f26+=fat2026[i]; r26+=fat2026[i]-desp2026[i]; }
+  set('pf26Val', 'R$ '+(f26/1000).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2})+' <span class="un">mil</span>');
+  set('pf26Note', `jan–${M[n26-1]} (${n26} meses reais, fonte contabilidade) · média ${brl(f26/n26)}/mês · resultado <b>${brl(r26)}</b>`);
+  set('pf26Tag', `margem ${pctf(f26?r26/f26:0,0)}`);
+  set('pfBeVal', (o.be.be?brl(o.be.be):'—')+'<small>/mês</small>');
+  set('pfFatRecK', 'Faturamento médio (últimos 6 meses reais)');
+  set('pfFatRec', brl(o.fatRec)+'<small>/mês</small>');
+  set('pfMargem', o.be.be ? ((o.fatRec/o.be.be-1)>=0?'+':'')+pctf(o.fatRec/o.be.be-1) : '—');
+  set('ovBeLbl', 'Break-even: '+(o.be.be?brl(o.be.be).replace(/,\d\d$/,''):'—'));
+}
+
+/* Inputs de índices */
+function ivBindInputs(){
+  [['ivCdi','cdi',4],['ivUsd0','usd0',4],['ivUsd1','usd1',4],['ivIbov0','ibov0',0],['ivIbov1','ibov1',0]].forEach(([id,key,d])=>{
+    const el = document.getElementById(id), src = document.getElementById(id+'Src');
+    el.value = ivFmt(ivNum(iv[key]), d);
+    const paintSrc = () => { src.innerHTML = esc(iv[key+'Src']||'') + (iv.chk[key]?' <span class="iv-chk">conferir</span>':''); };
+    paintSrc();
+    el.addEventListener('change', ()=>{
+      iv[key] = ivNum(el.value); iv[key+'Src'] = 'digitado por você em '+new Date().toLocaleDateString('pt-BR'); iv.chk[key]=false;
+      el.value = ivFmt(iv[key], d); paintSrc(); lsSet(IV_KEY, iv); ivRender();
+    });
+  });
+}
+async function ivFetchBCB(){
+  const st = document.getElementById('ivFetchStatus');
+  st.textContent = 'Buscando no Banco Central…';
+  const msgs = [];
+  const [ly, lm] = ymOf(LAST_REAL).split('-').map(Number);
+  const lastDay = new Date(ly, lm, 0).getDate();
+  const get = async url => { const r = await fetch(url); if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); };
+  try{
+    const d = await get(`https://api.bcb.gov.br/dados/serie/bcdata.sgs.4391/dados?formato=json&dataInicial=01/01/2024&dataFinal=${lastDay}/${String(lm).padStart(2,'0')}/${ly}`);
+    const f = d.reduce((s,x)=>s*(1+parseFloat(x.valor)/100),1);
+    iv.cdi = Math.round((f-1)*10000)/100; iv.cdiSrc = `BCB série 4391 · ${d.length} meses até ${REAL_LABEL} · buscado em ${new Date().toLocaleDateString('pt-BR')}`; iv.chk.cdi=false;
+    msgs.push('CDI ✓');
+  }catch(e){ msgs.push('CDI não carregou ('+e.message+')'); }
+  try{
+    const d0 = await get('https://api.bcb.gov.br/dados/serie/bcdata.sgs.1/dados?formato=json&dataInicial=15/12/2023&dataFinal=31/12/2023');
+    const d1 = await get(`https://api.bcb.gov.br/dados/serie/bcdata.sgs.1/dados?formato=json&dataInicial=15/${String(lm).padStart(2,'0')}/${ly}&dataFinal=${lastDay}/${String(lm).padStart(2,'0')}/${ly}`);
+    const a = d0[d0.length-1], b = d1[d1.length-1];
+    iv.usd0 = parseFloat(a.valor); iv.usd0Src = `BCB série 1 · ${a.data}`; iv.chk.usd0=false;
+    iv.usd1 = parseFloat(b.valor); iv.usd1Src = `BCB série 1 · ${b.data}`; iv.chk.usd1=false;
+    msgs.push('Dólar ✓');
+  }catch(e){ msgs.push('Dólar não carregou ('+e.message+')'); }
+  lsSet(IV_KEY, iv);
+  st.textContent = msgs.join(' · ') + (msgs.some(m=>m.includes('não')) ? ' — o navegador pode estar bloqueando o acesso; digite os valores manualmente (fonte: bcb.gov.br).' : '');
+  ['ivCdi','ivUsd0','ivUsd1','ivIbov0','ivIbov1'].forEach(id=>{ const el=document.getElementById(id); const nEl = el.cloneNode(true); el.replaceWith(nEl); });
+  ivBindInputs(); ivRender();
+}
+document.getElementById('ivFetch').addEventListener('click', ivFetchBCB);
+ivBindInputs();
+ivRender();
+fxRender();
+// busca automática uma vez por dia, se ainda não houver CDI
+(function(){ const k='lavateria_bench_fetch'; let last=null; try{ last=localStorage.getItem(k); }catch(e){}
+  const today = new Date().toISOString().slice(0,10);
+  if(ivNum(iv.cdi)==null && last!==today){ try{ localStorage.setItem(k,today); }catch(e){} ivFetchBCB(); } })();
+
+</script>
 </body>
 </html>
